@@ -1,0 +1,23 @@
+# Build and image outputs
+build/
+dist/
+out/
+*.img
+*.img.xz
+*.img.zst
+*.iso
+*.wic
+*.qcow2
+*.raw
+
+# Generated evidence and local state
+state/
+artifacts/
+*.log
+*.sha256
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
