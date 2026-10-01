@@ -1,0 +1,13 @@
+name: PHIPIE-00 contract
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify repository contract layout
+        run: bash scripts/verify-layout.sh
