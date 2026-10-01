@@ -5,7 +5,9 @@ required=(
   README.md
   LICENSE
   AGENTS.md
+  deps/phios.env
   docs/PHIPIE_PLATFORM_CONTRACT.md
+  docs/PHIPIE_01_ARM64_SOFTWARE_CI.md
   docs/ARCHITECTURE.md
   docs/QUALIFICATION.md
   docs/ROADMAP.md
@@ -16,6 +18,8 @@ required=(
   runtime/identity/README.md
   runtime/missions/README.md
   runtime/governance/README.md
+  scripts/fetch-phios.sh
+  scripts/assert-architecture.sh
   tests/README.md
 )
 
@@ -31,4 +35,14 @@ if grep -RInE 'PhiPie[[:space:]]*=[[:space:]]*PhiOS fork|capability[[:space:]]*=
   exit 1
 fi
 
-echo "PHIPIE-00 layout verified"
+if ! grep -Eq '^PHIOS_COMMIT=[0-9a-f]{40}$' deps/phios.env; then
+  echo "deps/phios.env must pin PhiOS by an exact lowercase 40-character commit SHA" >&2
+  exit 1
+fi
+
+if ! grep -Fxq 'PHIOS_REPOSITORY=https://github.com/MichaelWave369/PhiOS.git' deps/phios.env; then
+  echo "deps/phios.env contains an unexpected PhiOS repository" >&2
+  exit 1
+fi
+
+echo "PhiPie contract layout verified"

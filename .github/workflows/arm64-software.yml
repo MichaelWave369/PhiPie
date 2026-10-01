@@ -1,0 +1,233 @@
+name: PHIPIE-01 ARM64 software
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-contract:
+    name: Exact PhiOS input
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify repository contract layout
+        run: bash scripts/verify-layout.sh
+      - name: Fetch and verify exact PhiOS source
+        run: bash scripts/fetch-phios.sh upstream/PhiOS
+      - name: Record input identity
+        run: |
+          source deps/phios.env
+          printf 'PhiPie=%s\nPhiOS=%s\nsource_line=%s\n'             "$GITHUB_SHA" "$PHIOS_COMMIT" "$PHIOS_SOURCE_LINE"
+
+  phios-core:
+    name: PhiOS core / ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prove runner architecture
+        run: bash scripts/assert-architecture.sh "${{ matrix.arch }}"
+      - name: Fetch exact PhiOS source
+        run: bash scripts/fetch-phios.sh upstream/PhiOS
+      - name: Install PhiOS development dependencies
+        working-directory: upstream/PhiOS
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e ".[dev]"
+      - name: Verify external Python build frontend
+        working-directory: upstream/PhiOS
+        run: |
+          python - <<'PY'
+          from importlib.util import find_spec
+          from pathlib import Path
+
+          spec = find_spec("build")
+          assert spec is not None and spec.origin, "python-build frontend is unavailable"
+          origin = Path(spec.origin).resolve()
+          repo_build = (Path.cwd() / "build").resolve()
+          assert origin != repo_build / "__init__.py", (
+              f"repository build shim shadows python-build frontend: {origin}"
+          )
+          print(f"python-build frontend: {origin}")
+          PY
+          python -m build --version
+      - name: Ruff
+        working-directory: upstream/PhiOS
+        run: ruff check phios/
+      - name: Mypy
+        working-directory: upstream/PhiOS
+        run: mypy phios/ --ignore-missing-imports
+      - name: Full PhiOS test suite
+        working-directory: upstream/PhiOS
+        run: pytest -q
+      - name: Enforce no telemetry policy
+        working-directory: upstream/PhiOS
+        run: bash scripts/policy_no_telemetry_runtime.sh
+      - name: Build installable wheel
+        working-directory: upstream/PhiOS
+        run: |
+          rm -rf dist-phipie
+          python -m pip wheel . --no-deps --wheel-dir dist-phipie
+          ls -lah dist-phipie
+      - name: Smoke-test installed wheel outside source tree
+        working-directory: upstream/PhiOS
+        run: |
+          python -m venv /tmp/phios-phipie-smoke
+          /tmp/phios-phipie-smoke/bin/python -m pip install --upgrade pip
+          /tmp/phios-phipie-smoke/bin/python -m pip install dist-phipie/*.whl
+          cd /tmp
+          /tmp/phios-phipie-smoke/bin/python - <<'PY'
+          import platform
+          import phios
+          import phios.network
+          import phios.shell.phi_session
+          print("installed PhiOS imports succeeded")
+          print("machine:", platform.machine())
+          print("PhiOS:", phios.__version__)
+          PY
+          /tmp/phios-phipie-smoke/bin/phi --help >/dev/null
+          /tmp/phios-phipie-smoke/bin/phi-spine --help >/dev/null
+          /tmp/phios-phipie-smoke/bin/phi-memory --help >/dev/null
+
+  phishell:
+    name: PhiShell / ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Prove runner architecture
+        run: bash scripts/assert-architecture.sh "${{ matrix.arch }}"
+      - name: Fetch exact PhiOS source
+        run: bash scripts/fetch-phios.sh upstream/PhiOS
+      - name: Install PhiShell dependencies
+        working-directory: upstream/PhiOS/phishell
+        run: npm install --no-audit --no-fund
+      - name: Test PhiShell contracts
+        working-directory: upstream/PhiOS/phishell
+        run: npm test
+      - name: Exercise read-only Linux host probe
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:linux -- --check
+      - name: Exercise allowlisted systemd service probe
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:services -- --require-systemd
+      - name: Exercise bounded current-user process probe
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:processes -- --require-linux
+      - name: Exercise read-only package inventory
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:packages -- --require-debian
+      - name: Exercise bounded sysfs device inventory
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:devices -- --require-linux
+      - name: Compose coherent unified system state receipt
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:state -- --require-coherent
+      - name: Derive bounded system change receipt
+        working-directory: upstream/PhiOS/phishell
+        run: npm run probe:changes -- --check
+      - name: Type-check and build PhiShell
+        working-directory: upstream/PhiOS/phishell
+        run: npm run build
+      - name: Verify same-origin local transport
+        working-directory: upstream/PhiOS/phishell
+        run: npm run transport:check
+
+  arm64-native-backends:
+    name: ARM64 memory + ledger native backends
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Prove native ARM64 runner
+        run: bash scripts/assert-architecture.sh aarch64
+      - name: Fetch exact PhiOS source
+        run: bash scripts/fetch-phios.sh upstream/PhiOS
+      - name: Install Bubblewrap isolation
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          if [[ -f /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          fi
+          bwrap --version
+      - name: Install ARM64 native backends
+        working-directory: upstream/PhiOS
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,memory-vector,ledger-reports]"
+          python - <<'PY'
+          import platform
+          import duckdb
+          import sqlite_vec
+
+          assert duckdb.__version__ == "1.5.5", duckdb.__version__
+          print("machine:", platform.machine())
+          print("duckdb:", duckdb.__version__, duckdb.__file__)
+          print("sqlite_vec:", sqlite_vec.__file__)
+          PY
+      - name: Run governed-memory ARM64 backend tests
+        working-directory: upstream/PhiOS
+        run: |
+          pytest -q             tests/test_memory_embeddings_v01.py             tests/test_memory_sqlite_vec_v01.py             tests/test_memory_semantic_retrieval_v01.py
+      - name: Run ledger ARM64 backend tests
+        working-directory: upstream/PhiOS
+        run: |
+          pytest -q             tests/test_ledger_report_contract_v01.py             tests/test_ledger_report_duckdb_v01.py
+
+  phipie-01-gate:
+    name: PHIPIE-01 gate
+    if: always()
+    needs:
+      - dependency-contract
+      - phios-core
+      - phishell
+      - arm64-native-backends
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require every PHIPIE-01 lane
+        env:
+          DEPENDENCY: ${{ needs.dependency-contract.result }}
+          CORE: ${{ needs.phios-core.result }}
+          PHISHELL: ${{ needs.phishell.result }}
+          BACKENDS: ${{ needs.arm64-native-backends.result }}
+        run: |
+          printf 'dependency-contract=%s\nphios-core=%s\nphishell=%s\narm64-native-backends=%s\n'             "$DEPENDENCY" "$CORE" "$PHISHELL" "$BACKENDS"
+          [[ "$DEPENDENCY" == "success" ]]
+          [[ "$CORE" == "success" ]]
+          [[ "$PHISHELL" == "success" ]]
+          [[ "$BACKENDS" == "success" ]]
+          echo "PHIPIE-01 native ARM64 software gate passed."
