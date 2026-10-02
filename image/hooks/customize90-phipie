@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${1:?rpi-image-gen root filesystem argument is required}"
+
+install -d -m 0755 "$ROOT/etc"
+cat > "$ROOT/etc/phipie-release" <<'EOF'
+PHIPIE_IMAGE_SCHEMA=1
+PHIPIE_RUNG=PHIPIE-02
+PHIPIE_TARGET=rpi5-arm64
+PHIPIE_PROFILE=minimal
+PHIPIE_RUNTIME=not-installed
+PHIPIE_HARDWARE_QUALIFIED=false
+EOF
+chmod 0644 "$ROOT/etc/phipie-release"
+
+printf 'PhiPie minimal image marker written: %s\n' "$ROOT/etc/phipie-release"

@@ -1,0 +1,15 @@
+device:
+  layer: rpi5
+  hostname: phipie
+
+image:
+  layer: image-rpios
+  boot_part_size: 200%
+  root_part_size: 300%
+  name: phipie-rpi5-arm64-min
+
+layer:
+  base: trixie-minbase
+
+env:
+  SOURCE_DATE_EPOCH: 1790899924
