@@ -5,8 +5,8 @@ Each rung should remain small enough to fail clearly.
 | Rung | State | Goal | Exit signal |
 | --- | --- | --- | --- |
 | **PHIPIE-00** | complete | Platform contract + repo skeleton | docs + structural CI |
-| **PHIPIE-01** | current | ARM64 software CI | PhiOS/PhiShell ARM64-compatible test evidence |
-| **PHIPIE-02** | planned | Minimal image builder | reproducible ARM64 image artifact |
+| **PHIPIE-01** | complete | ARM64 software CI | PhiOS/PhiShell native ARM64 test evidence |
+| **PHIPIE-02** | current | Minimal image builder | versioned ARM64 image artifact + provenance |
 | **PHIPIE-03** | planned | Raspberry Pi 5 boot | real-board boot + retained evidence |
 | **PHIPIE-04** | planned | PhiOS runtime | PhiOS core services execute on board |
 | **PHIPIE-05** | planned | PhiShell desktop | qualified display/input/session path |

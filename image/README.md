@@ -2,13 +2,17 @@
 
 This directory owns PhiPie image composition.
 
-PHIPIE-00 intentionally contains no active image builder.
+PHIPIE-02 activates the first image builder using an exact pinned Raspberry Pi
+`rpi-image-gen` source commit.
 
-Planned subdirectories:
+Current paths:
 
 - `configs/` — image/profile configuration;
-- `layers/` — composable image layers;
-- `overlays/` — filesystem/config overlays;
-- `packages/` — PhiPie-specific packaging metadata.
+- `hooks/` — minimal build-time filesystem customisation;
+- `layers/` — reserved for PhiPie composable layers as the image grows;
+- `overlays/` — reserved filesystem/config overlays;
+- `packages/` — reserved PhiPie-specific packaging metadata.
 
-PHIPIE-02 will select, pin and qualify the first image-builder workflow.
+The PHIPIE-02 profile intentionally does not install PhiOS yet. It proves image
+construction before PHIPIE-03 physical boot evidence and PHIPIE-04 PhiOS runtime
+integration.

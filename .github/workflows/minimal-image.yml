@@ -1,0 +1,64 @@
+name: PHIPIE-02 minimal image
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  builder-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/verify-layout.sh
+      - run: bash scripts/fetch-rpi-image-gen.sh tools/rpi-image-gen
+
+  build-image:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove native ARM64 runner
+        run: bash scripts/assert-architecture.sh aarch64
+      - name: Fetch exact image builder
+        run: bash scripts/fetch-rpi-image-gen.sh tools/rpi-image-gen
+      - name: Install declared host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-yaml python3-debian dpkg-dev mmdebstrap debian-archive-keyring podman uidmap dbus-user-session zip dosfstools e2fsprogs rsync curl ca-certificates xz-utils mtools pv btrfs-progs dctrl-tools uuid-runtime fdisk python3-jsonschema cryptsetup-bin python3-pip make build-essential autoconf automake libtool autopoint flex gettext pkgconf zstd file
+          sudo chmod o+x /home/runner
+      - name: Build and verify image
+        run: bash scripts/build-image.sh
+      - name: Record evidence
+        run: |
+          fdisk -l dist/phipie-rpi5-arm64-min.img | tee dist/partition-report.txt
+          python scripts/write-image-manifest.py --image dist/phipie-rpi5-arm64-min.img --config image/configs/phipie-rpi5-min.yaml --phipie-source "$GITHUB_SHA" --output dist/phipie-image-manifest.json
+          zstd -T0 -10 -f dist/phipie-rpi5-arm64-min.img -o dist/phipie-rpi5-arm64-min.img.zst
+          sha256sum dist/phipie-rpi5-arm64-min.img dist/phipie-rpi5-arm64-min.img.zst dist/phipie-image-manifest.json dist/partition-report.txt > dist/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phipie-02-rpi5-arm64-min
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            dist/phipie-rpi5-arm64-min.img.zst
+            dist/phipie-image-manifest.json
+            dist/partition-report.txt
+            dist/SHA256SUMS
+
+  phipie-02-gate:
+    if: always()
+    needs: [builder-contract, build-image]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require PHIPIE-02 lanes
+        env:
+          CONTRACT: ${{ needs.builder-contract.result }}
+          IMAGE: ${{ needs.build-image.result }}
+        run: |
+          test "$CONTRACT" = success
+          test "$IMAGE" = success
