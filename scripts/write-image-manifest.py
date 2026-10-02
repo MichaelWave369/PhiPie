@@ -36,6 +36,10 @@ def main() -> None:
     parser.add_argument("--config", required=True)
     parser.add_argument("--phipie-source", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--rung", default="PHIPIE-02")
+    parser.add_argument("--profile", default="minimal")
+    parser.add_argument("--target", default="rpi5-arm64")
+    parser.add_argument("--phios-runtime-installed", action="store_true")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
@@ -47,21 +51,22 @@ def main() -> None:
     if not re.fullmatch(r"[0-9a-f]{40}", args.phipie_source):
         raise SystemExit("PHIPIE source must be an exact lowercase 40-character commit SHA")
 
-    config_text = config.read_text(encoding="utf-8")
+    base_config = root / "image/configs/phipie-rpi5-min.yaml"
+    config_text = base_config.read_text(encoding="utf-8")
     match = re.search(r"^\s*SOURCE_DATE_EPOCH:\s*(\d+)\s*$", config_text, re.MULTILINE)
     if not match:
-        raise SystemExit("image config does not declare SOURCE_DATE_EPOCH")
+        raise SystemExit("base image config does not declare SOURCE_DATE_EPOCH")
 
     payload = {
         "schema": "phipie.image-manifest.v1",
-        "rung": "PHIPIE-02",
-        "target": "rpi5-arm64",
-        "profile": "minimal",
+        "rung": args.rung,
+        "target": args.target,
+        "profile": args.profile,
         "phipie_source_commit": args.phipie_source,
         "phios_input": {
             "repository": phios["PHIOS_REPOSITORY"],
             "commit": phios["PHIOS_COMMIT"],
-            "installed_in_image": False,
+            "installed_in_image": args.phios_runtime_installed,
         },
         "image_builder": {
             "repository": builder["RPI_IMAGE_GEN_REPOSITORY"],
@@ -87,13 +92,13 @@ def main() -> None:
             "raspberry_pi_5_boot_qualified": False,
             "raspberry_pi_5_hardware_qualified": False,
             "compute_module_5_qualified": False,
-            "phios_runtime_installed": False,
+            "phios_runtime_installed": args.phios_runtime_installed,
         },
         "notes": [
             "The image builder is pinned by exact commit.",
-            "The image uses the rpi-image-gen trixie-minbase suite, whose package repositories may advance.",
-            "PHIPIE-02 therefore records exact artifact identity but does not claim future rebuilds are bit-for-bit identical.",
-            "Physical boot and hardware observations begin at PHIPIE-03.",
+            "The image uses the rpi-image-gen Trixie suite, whose package repositories may advance.",
+            "Artifact identity is recorded; future bit-for-bit rebuild identity is not claimed.",
+            "Physical Raspberry Pi 5 qualification requires PHIPIE-03 field evidence.",
         ],
     }
 

@@ -2,9 +2,52 @@
 set -euo pipefail
 
 ROOT="${1:?rpi-image-gen root filesystem argument is required}"
+FIELD_CAPTURE="${PHIPIE_FIELD_CAPTURE:-0}"
 
 install -d -m 0755 "$ROOT/etc"
-cat > "$ROOT/etc/phipie-release" <<'EOF'
+
+if [[ "$FIELD_CAPTURE" == "1" ]]; then
+  cat > "$ROOT/etc/phipie-release" <<'EOF'
+PHIPIE_IMAGE_SCHEMA=1
+PHIPIE_RUNG=PHIPIE-03
+PHIPIE_TARGET=rpi5-arm64
+PHIPIE_PROFILE=field
+PHIPIE_RUNTIME=not-installed
+PHIPIE_HARDWARE_QUALIFIED=false
+EOF
+
+  : "${SRCROOT:?rpi-image-gen SRCROOT is required for the PHIPIE-03 field profile}"
+  COLLECTOR="$SRCROOT/field/collect_boot_evidence.py"
+  if [[ ! -f "$COLLECTOR" ]]; then
+    echo "missing PHIPIE-03 collector: $COLLECTOR" >&2
+    exit 1
+  fi
+
+  install -d -m 0755 "$ROOT/usr/local/lib/phipie"
+  install -m 0755 "$COLLECTOR" "$ROOT/usr/local/lib/phipie/collect-boot-evidence.py"
+
+  install -d -m 0755 "$ROOT/etc/systemd/system"
+  cat > "$ROOT/etc/systemd/system/phipie-field-capture.service" <<'EOF'
+[Unit]
+Description=PhiPie PHIPIE-03 first-boot evidence capture
+After=local-fs.target network.target
+ConditionPathExists=/etc/phipie-release
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/phipie/collect-boot-evidence.py
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  install -d -m 0755 "$ROOT/etc/systemd/system/multi-user.target.wants"
+  ln -sfn ../phipie-field-capture.service     "$ROOT/etc/systemd/system/multi-user.target.wants/phipie-field-capture.service"
+
+  echo "PHIPIE-03 field capture service installed"
+else
+  cat > "$ROOT/etc/phipie-release" <<'EOF'
 PHIPIE_IMAGE_SCHEMA=1
 PHIPIE_RUNG=PHIPIE-02
 PHIPIE_TARGET=rpi5-arm64
@@ -12,6 +55,8 @@ PHIPIE_PROFILE=minimal
 PHIPIE_RUNTIME=not-installed
 PHIPIE_HARDWARE_QUALIFIED=false
 EOF
-chmod 0644 "$ROOT/etc/phipie-release"
 
-printf 'PhiPie minimal image marker written: %s\n' "$ROOT/etc/phipie-release"
+  echo "PHIPIE-02 minimal image marker installed"
+fi
+
+chmod 0644 "$ROOT/etc/phipie-release"

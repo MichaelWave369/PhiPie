@@ -2,17 +2,20 @@
 
 This directory owns PhiPie image composition.
 
-PHIPIE-02 activates the first image builder using an exact pinned Raspberry Pi
-`rpi-image-gen` source commit.
+The image builder is Raspberry Pi's `rpi-image-gen`, pinned by exact source identity.
 
-Current paths:
+Current profiles:
+
+- `configs/phipie-rpi5-min.yaml` — PHIPIE-02 minimal construction image;
+- `configs/phipie-rpi5-field.yaml` — PHIPIE-03 physical boot field candidate.
+
+Current support paths:
 
 - `configs/` — image/profile configuration;
-- `hooks/` — minimal build-time filesystem customisation;
+- `hooks/` — build-time filesystem customisation;
+- `field/` — observation-only first-boot collector embedded in the field image;
 - `layers/` — reserved for PhiPie composable layers as the image grows;
 - `overlays/` — reserved filesystem/config overlays;
 - `packages/` — reserved PhiPie-specific packaging metadata.
 
-The PHIPIE-02 profile intentionally does not install PhiOS yet. It proves image
-construction before PHIPIE-03 physical boot evidence and PHIPIE-04 PhiOS runtime
-integration.
+Neither current profile installs the PhiOS runtime. PHIPIE-04 owns that integration.
