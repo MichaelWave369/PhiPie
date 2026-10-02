@@ -10,13 +10,15 @@ PhiPie is **not** a fork of PhiOS. PhiOS owns the operating-system contracts, go
 
 ## Status
 
-**PHIPIE-02 — minimal Raspberry Pi 5-targeted ARM64 image builder**
+**PHIPIE-03 — Raspberry Pi 5 field candidate**
 
-PHIPIE-00 established the platform contract. PHIPIE-01 proved the pinned PhiOS software stack on native ARM64 CI. PHIPIE-02 now constructs a versioned minimal Pi 5 disk image with a pinned image-builder identity and an evidence manifest.
+PHIPIE-00 established the platform contract. PHIPIE-01 proved the pinned PhiOS software stack on native ARM64 CI. PHIPIE-02 produced the first Pi 5-targeted ARM64 disk image with provenance.
 
-This rung deliberately does **not** claim Raspberry Pi 5 boot or hardware qualification. Physical boot evidence begins at PHIPIE-03, and the actual PhiOS runtime is integrated at PHIPIE-04.
+PHIPIE-03 now prepares a dedicated physical-test image that captures bounded first-boot evidence on a real Raspberry Pi 5. CI can qualify the field candidate, but **only a real board can complete PHIPIE-03**.
 
-See [PHIPIE-02](docs/PHIPIE_02_MINIMAL_IMAGE.md) and the [roadmap](docs/ROADMAP.md).
+The PhiOS runtime is intentionally still not installed in this rung. That integration remains PHIPIE-04.
+
+See [PHIPIE-03](docs/PHIPIE_03_RPI5_BOOT_QUALIFICATION.md) and the [roadmap](docs/ROADMAP.md).
 
 ## Intended platform path
 
@@ -40,6 +42,7 @@ PhiPie != PhiOS fork
 
 ARM64 build success != hardware qualification
 image constructed != image booted
+field receipt != hardware qualification
 installed != authorized
 network reachable != trusted
 device identity != PhiBot identity

@@ -1,0 +1,95 @@
+name: PHIPIE-03 Raspberry Pi 5 field candidate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  collector-contract:
+    name: Field collector contract
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify repository layout
+        run: bash scripts/verify-layout.sh
+      - name: Prove native ARM64 runner
+        run: bash scripts/assert-architecture.sh aarch64
+      - name: Syntax-check field tools
+        run: |
+          python -m py_compile image/field/collect_boot_evidence.py
+          python -m py_compile scripts/field/validate-receipt.py
+          bash -n scripts/field/verify-candidate.sh
+          bash -n image/hooks/customize90-phipie
+          bash -n scripts/build-image.sh
+      - name: Exercise collector against a Pi 5 fixture
+        run: |
+          root="$RUNNER_TEMP/phipie-fixture"
+          out="$RUNNER_TEMP/phipie-evidence"
+          mkdir -p "$root/proc/device-tree" "$root/proc/sys/kernel/random" "$root/etc" "$root/sys/class/net/eth0"
+          printf 'Raspberry Pi 5 Model B Rev 1.0\0' > "$root/proc/device-tree/model"
+          printf 'raspberrypi,5-model-b\0brcm,bcm2712\0' > "$root/proc/device-tree/compatible"
+          printf 'fixture-boot-0001\n' > "$root/proc/sys/kernel/random/boot_id"
+          printf '12.50 2.00\n' > "$root/proc/uptime"
+          printf 'PHIPIE_IMAGE_SCHEMA=1\nPHIPIE_RUNG=PHIPIE-03\nPHIPIE_TARGET=rpi5-arm64\nPHIPIE_PROFILE=field\nPHIPIE_RUNTIME=not-installed\nPHIPIE_HARDWARE_QUALIFIED=false\n' > "$root/etc/phipie-release"
+          printf 'up\n' > "$root/sys/class/net/eth0/operstate"
+          printf '1\n' > "$root/sys/class/net/eth0/carrier"
+          printf '1500\n' > "$root/sys/class/net/eth0/mtu"
+          python image/field/collect_boot_evidence.py --root "$root" --output-root "$out"
+          python scripts/field/validate-receipt.py "$out/phipie-field/boot-fixture-boot-0001.json"
+
+  build-field-image:
+    name: Build PHIPIE-03 field image
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove native ARM64 runner
+        run: bash scripts/assert-architecture.sh aarch64
+      - name: Fetch exact image builder
+        run: bash scripts/fetch-rpi-image-gen.sh tools/rpi-image-gen
+      - name: Install declared host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-yaml python3-debian dpkg-dev mmdebstrap debian-archive-keyring podman uidmap dbus-user-session zip dosfstools e2fsprogs rsync curl ca-certificates xz-utils mtools pv btrfs-progs dctrl-tools uuid-runtime fdisk python3-jsonschema cryptsetup-bin python3-pip make build-essential autoconf automake libtool autopoint flex gettext pkgconf zstd file
+          sudo chmod o+x /home/runner
+      - name: Build and verify field image
+        run: bash scripts/build-image.sh field
+      - name: Record field candidate evidence
+        run: |
+          fdisk -l dist/phipie-rpi5-arm64-field.img | tee dist/partition-report.txt
+          python scripts/write-image-manifest.py             --image dist/phipie-rpi5-arm64-field.img             --config image/configs/phipie-rpi5-field.yaml             --phipie-source "$GITHUB_SHA"             --rung PHIPIE-03             --profile field             --output dist/phipie-field-image-manifest.json
+          zstd -T0 -10 -f dist/phipie-rpi5-arm64-field.img -o dist/phipie-rpi5-arm64-field.img.zst
+          sha256sum             dist/phipie-rpi5-arm64-field.img             dist/phipie-rpi5-arm64-field.img.zst             dist/phipie-field-image-manifest.json             dist/partition-report.txt             > dist/SHA256SUMS
+          cp docs/PHIPIE_03_RPI5_BOOT_QUALIFICATION.md dist/FIELD-TEST-INSTRUCTIONS.md
+          cat dist/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phipie-03-rpi5-field-candidate
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            dist/phipie-rpi5-arm64-field.img.zst
+            dist/phipie-field-image-manifest.json
+            dist/partition-report.txt
+            dist/SHA256SUMS
+            dist/FIELD-TEST-INSTRUCTIONS.md
+
+  phipie-03-candidate-gate:
+    name: PHIPIE-03 candidate gate
+    if: always()
+    needs: [collector-contract, build-field-image]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require field-candidate lanes
+        env:
+          COLLECTOR: ${{ needs.collector-contract.result }}
+          IMAGE: ${{ needs.build-field-image.result }}
+        run: |
+          test "$COLLECTOR" = success
+          test "$IMAGE" = success
+          echo "PHIPIE-03 field candidate is ready for physical Pi 5 testing."

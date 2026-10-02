@@ -1,0 +1,13 @@
+include:
+  file: phipie-rpi5-min.yaml
+
+image:
+  name: phipie-rpi5-arm64-field
+
+packages:
+  - python3
+  - iproute2
+  - util-linux
+
+env:
+  PHIPIE_FIELD_CAPTURE: "1"
