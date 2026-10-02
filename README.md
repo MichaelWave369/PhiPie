@@ -10,9 +10,13 @@ PhiPie is **not** a fork of PhiOS. PhiOS owns the operating-system contracts, go
 
 ## Status
 
-**PHIPIE-00 — platform contract / repository bootstrap**
+**PHIPIE-01 — native ARM64 software compatibility CI**
 
-No production PhiPie image exists yet. No Raspberry Pi or Compute Module hardware is qualified by this repository yet. The first milestones intentionally establish architecture, evidence boundaries, and ARM64 CI before image generation or hardware claims.
+PHIPIE-00 established the platform contract and repository boundaries. PHIPIE-01 now tests an exact pinned PhiOS source on native x86_64 and native ARM64 Linux runners, including PhiOS core, PhiShell, and the ARM64 native memory/ledger backends.
+
+No production PhiPie image exists yet. No Raspberry Pi or Compute Module hardware is qualified by this repository yet.
+
+See [PHIPIE-01](docs/PHIPIE_01_ARM64_SOFTWARE_CI.md) and the [roadmap](docs/ROADMAP.md).
 
 ## Intended platform path
 
