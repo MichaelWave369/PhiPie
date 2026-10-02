@@ -8,7 +8,7 @@ DIST_DIR="${PHIPIE_DIST_DIR:-$ROOT_DIR/dist}"
 IMAGE_NAME="phipie-rpi5-arm64-min.img"
 SOURCE_DATE_EPOCH_EXPECTED="1790899924"
 
-"$ROOT_DIR/scripts/assert-architecture.sh" aarch64
+bash "$ROOT_DIR/scripts/assert-architecture.sh" aarch64
 
 if [[ ! -x "$BUILDER_DIR/rpi-image-gen" ]]; then
   echo "rpi-image-gen is not present at $BUILDER_DIR; run scripts/fetch-rpi-image-gen.sh first" >&2
