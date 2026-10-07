@@ -26,3 +26,8 @@ The next experimental layer is documented in
 [`docs/PHYSICAL_HOST_IO_BOUNDARY.md`](../docs/PHYSICAL_HOST_IO_BOUNDARY.md).
 It keeps hardware-specific sensor and actuator adapters behind deterministic
 authority checks. The repository still contains no real GPIO actuator driver.
+## Raspberry Pi read-only telemetry
+
+The experimental `physical_host/pi_telemetry.py` adapter reads local Raspberry Pi/Linux host observations into receipts without becoming a Plane A safety sensor or exposing an actuator method.
+
+See [`docs/RPI_READONLY_TELEMETRY.md`](../docs/RPI_READONLY_TELEMETRY.md).
