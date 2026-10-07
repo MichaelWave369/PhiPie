@@ -39,6 +39,14 @@ from .model import (
     default_manifest,
     validate_manifest,
 )
+from .nbg_memory_bridge import (
+    NBG_SCHEMA_BLOB_SHA,
+    NBG_SCHEMA_SOURCE,
+    NBG_SCHEMA_VERSION,
+    journal_record_to_nbg_memory,
+    nbg_fingerprint,
+    validate_nbg_memory,
+)
 from .pi_telemetry import (
     NetworkInterfaceObservation,
     PiTelemetryObserver,
@@ -58,6 +66,12 @@ __all__ = [
     "HealthEpisodeEvent",
     "MetricBaseline",
     "MetricDrift",
+    "NBG_SCHEMA_BLOB_SHA",
+    "NBG_SCHEMA_SOURCE",
+    "NBG_SCHEMA_VERSION",
+    "journal_record_to_nbg_memory",
+    "nbg_fingerprint",
+    "validate_nbg_memory",
     "NetworkInterfaceObservation",
     "NullActuatorAdapter",
     "PhysicalHostController",

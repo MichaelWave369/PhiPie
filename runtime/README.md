@@ -40,3 +40,9 @@ evidence only. It never changes Plane A safety state and exposes no actuator
 execution surface.
 
 See [`docs/PI_HEALTH_BASELINE.md`](../docs/PI_HEALTH_BASELINE.md).
+
+## NBG physical-memory bridge
+
+`physical_host/nbg_memory_bridge.py` converts completed host-health episode journal records into pinned `NBG_EPISTEMIC_1` memory records. The bridge preserves inferred provenance and never grants action authority.
+
+See [`docs/NBG_MEMORY_BRIDGE.md`](../docs/NBG_MEMORY_BRIDGE.md).
