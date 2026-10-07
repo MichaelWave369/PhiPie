@@ -6,6 +6,13 @@ before real GPIO, batteries, motors, relays, or other physical actuators are
 introduced.
 """
 
+from .health_episodes import (
+    EPISODE_CONTRACT,
+    HealthEpisodeEvent,
+    HostHealthEpisode,
+    HostHealthEpisodeTracker,
+    HostHealthJournal,
+)
 from .health_baseline import (
     BASELINE_CONTRACT,
     MetricBaseline,
@@ -43,7 +50,12 @@ from .runtime import PhysicalHostRuntime
 __all__ = [
     "ActionDecision",
     "BASELINE_CONTRACT",
+    "EPISODE_CONTRACT",
     "HostState",
+    "HostHealthJournal",
+    "HostHealthEpisodeTracker",
+    "HostHealthEpisode",
+    "HealthEpisodeEvent",
     "MetricBaseline",
     "MetricDrift",
     "NetworkInterfaceObservation",
