@@ -23,14 +23,24 @@ from .model import (
     default_manifest,
     validate_manifest,
 )
+from .pi_telemetry import (
+    NetworkInterfaceObservation,
+    PiTelemetryObserver,
+    PiTelemetrySnapshot,
+    RaspberryPiTelemetryAdapter,
+)
 from .runtime import PhysicalHostRuntime
 
 __all__ = [
     "ActionDecision",
     "HostState",
+    "NetworkInterfaceObservation",
     "NullActuatorAdapter",
     "PhysicalHostController",
     "PhysicalHostRuntime",
+    "PiTelemetryObserver",
+    "PiTelemetrySnapshot",
+    "RaspberryPiTelemetryAdapter",
     "RecordingActuatorAdapter",
     "SafetyLimits",
     "ScenarioSensorAdapter",
