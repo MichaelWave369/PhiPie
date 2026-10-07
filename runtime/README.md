@@ -19,3 +19,10 @@ is to prove deterministic refusal/protect behavior, bounded action requests, and
 local receipt chaining before physical I/O is introduced.
 
 See [the simulator acceptance document](../docs/PHYSICAL_HOST_SIMULATOR.md).
+
+## Physical I/O boundary
+
+The next experimental layer is documented in
+[`docs/PHYSICAL_HOST_IO_BOUNDARY.md`](../docs/PHYSICAL_HOST_IO_BOUNDARY.md).
+It keeps hardware-specific sensor and actuator adapters behind deterministic
+authority checks. The repository still contains no real GPIO actuator driver.
