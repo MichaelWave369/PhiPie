@@ -20,6 +20,8 @@ The PhiOS runtime is intentionally still not installed in this rung. That integr
 
 See [PHIPIE-03](docs/PHIPIE_03_RPI5_BOOT_QUALIFICATION.md) and the [roadmap](docs/ROADMAP.md).
 
+A future, non-qualifying [Phi Physical Host Contract proposal](docs/PHYSICAL_HOST_CONTRACT_PROPOSAL.md) captures the shared identity, power, thermal, environment, safety, service, action, and receipt boundaries for PhiBot-capable physical hosts without changing the active qualification rung.
+
 ## Intended platform path
 
 ```text
