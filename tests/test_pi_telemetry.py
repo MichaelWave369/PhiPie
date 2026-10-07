@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import unittest
 from datetime import datetime, timezone
 
@@ -116,7 +117,7 @@ class PiTelemetryTests(unittest.TestCase):
         self.assertIn("under_voltage_occurred", snap.throttled_flags)
         self.assertIn("throttling_occurred", snap.throttled_flags)
         self.assertEqual(0.72, snap.core_voltage_v)
-        self.assertEqual(
+        serialized = json.dumps(snap.to_dict(), sort_keys=True)\n        self.assertNotIn("10000000cafefeed", serialized)\n        self.assertNotIn("0123456789abcdef0123456789abcdef", serialized)\n        self.assertEqual(
             [
                 ("vcgencmd", "get_throttled"),
                 ("vcgencmd", "measure_volts", "core"),
