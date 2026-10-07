@@ -1,0 +1,22 @@
+name: PhiPie health baseline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pi-health-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run health baseline and drift tests
+        run: python -m unittest discover -s tests -p "test_pi_health_baseline.py" -v
+      - name: Re-run Pi read-only telemetry tests
+        run: python -m unittest discover -s tests -p "test_pi_telemetry.py" -v
+      - name: Re-run physical-host I/O regression tests
+        run: python -m unittest discover -s tests -p "test_physical_host_io.py" -v
+      - name: Re-run physical-host simulator regression tests
+        run: python -m unittest discover -s tests -p "test_physical_host.py" -v
