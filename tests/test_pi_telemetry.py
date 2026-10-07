@@ -22,26 +22,26 @@ def fixed_clock() -> datetime:
 class FakeHost:
     def __init__(self) -> None:
         self.files = {
-            "/proc/device-tree/model": "Raspberry Pi 5 Model B Rev 1.0\\x00",
-            "/proc/device-tree/compatible": "raspberrypi,5-model-b\\x00brcm,bcm2712\\x00",
-            "/proc/device-tree/serial-number": "10000000cafefeed\\x00",
-            "/etc/machine-id": "0123456789abcdef0123456789abcdef\\n",
-            "/sys/class/thermal/thermal_zone0/temp": "61250\\n",
-            "/proc/uptime": "12345.67 999.00\\n",
-            "/proc/loadavg": "0.25 0.50 0.75 1/100 123\\n",
+            "/proc/device-tree/model": "Raspberry Pi 5 Model B Rev 1.0\x00",
+            "/proc/device-tree/compatible": "raspberrypi,5-model-b\x00brcm,bcm2712\x00",
+            "/proc/device-tree/serial-number": "10000000cafefeed\x00",
+            "/etc/machine-id": "0123456789abcdef0123456789abcdef\n",
+            "/sys/class/thermal/thermal_zone0/temp": "61250\n",
+            "/proc/uptime": "12345.67 999.00\n",
+            "/proc/loadavg": "0.25 0.50 0.75 1/100 123\n",
             "/proc/meminfo": (
-                "MemTotal:        8178892 kB\\n"
-                "MemFree:         1000000 kB\\n"
-                "MemAvailable:    6123456 kB\\n"
+                "MemTotal:        8178892 kB\n"
+                "MemFree:         1000000 kB\n"
+                "MemAvailable:    6123456 kB\n"
             ),
-            "/sys/class/net/eth0/operstate": "up\\n",
-            "/sys/class/net/eth0/carrier": "1\\n",
-            "/sys/class/net/wlan0/operstate": "down\\n",
-            "/sys/class/net/wlan0/carrier": "0\\n",
+            "/sys/class/net/eth0/operstate": "up\n",
+            "/sys/class/net/eth0/carrier": "1\n",
+            "/sys/class/net/wlan0/operstate": "down\n",
+            "/sys/class/net/wlan0/carrier": "0\n",
         }
         self.commands = {
-            ("vcgencmd", "get_throttled"): "throttled=0x50005\\n",
-            ("vcgencmd", "measure_volts", "core"): "volt=0.7200V\\n",
+            ("vcgencmd", "get_throttled"): "throttled=0x50005\n",
+            ("vcgencmd", "measure_volts", "core"): "volt=0.7200V\n",
         }
         self.command_calls: list[tuple[str, ...]] = []
 
@@ -146,8 +146,8 @@ class PiTelemetryTests(unittest.TestCase):
 
     def test_non_pi_host_stays_observation_only(self) -> None:
         host = FakeHost()
-        host.files["/proc/device-tree/model"] = "Generic ARM64 Board\\x00"
-        host.files["/proc/device-tree/compatible"] = "vendor,generic-arm64\\x00"
+        host.files["/proc/device-tree/model"] = "Generic ARM64 Board\x00"
+        host.files["/proc/device-tree/compatible"] = "vendor,generic-arm64\x00"
 
         snap = self.adapter(host).read()
         self.assertFalse(snap.raspberry_pi_detected)
