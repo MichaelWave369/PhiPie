@@ -1,0 +1,20 @@
+name: Raspberry Pi read-only telemetry
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rpi-readonly-telemetry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run Raspberry Pi telemetry contract tests
+        run: python -m unittest discover -s tests -p "test_pi_telemetry.py" -v
+      - name: Re-run physical-host I/O regression tests
+        run: python -m unittest discover -s tests -p "test_physical_host_io.py" -v
+      - name: Re-run physical-host simulator regression tests
+        run: python -m unittest discover -s tests -p "test_physical_host.py" -v
