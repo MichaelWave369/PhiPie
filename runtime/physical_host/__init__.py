@@ -6,6 +6,15 @@ before real GPIO, batteries, motors, relays, or other physical actuators are
 introduced.
 """
 
+from .health_baseline import (
+    BASELINE_CONTRACT,
+    MetricBaseline,
+    MetricDrift,
+    PiHealthBaseline,
+    PiHealthBaselineBuilder,
+    PiHealthDriftReport,
+    PiHealthObserver,
+)
 from .io import (
     NullActuatorAdapter,
     RecordingActuatorAdapter,
@@ -33,11 +42,18 @@ from .runtime import PhysicalHostRuntime
 
 __all__ = [
     "ActionDecision",
+    "BASELINE_CONTRACT",
     "HostState",
+    "MetricBaseline",
+    "MetricDrift",
     "NetworkInterfaceObservation",
     "NullActuatorAdapter",
     "PhysicalHostController",
     "PhysicalHostRuntime",
+    "PiHealthBaseline",
+    "PiHealthBaselineBuilder",
+    "PiHealthDriftReport",
+    "PiHealthObserver",
     "PiTelemetryObserver",
     "PiTelemetrySnapshot",
     "RaspberryPiTelemetryAdapter",
