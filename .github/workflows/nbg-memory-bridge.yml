@@ -1,0 +1,20 @@
+name: NBG physical-memory bridge
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  nbg-memory-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run NBG memory bridge tests
+        run: python -m unittest discover -s tests -p "test_nbg_memory_bridge.py" -v
+      - name: Re-run host health episode tests
+        run: python -m unittest discover -s tests -p "test_health_episodes.py" -v
+      - name: Re-run Pi health baseline tests
+        run: python -m unittest discover -s tests -p "test_pi_health_baseline.py" -v
