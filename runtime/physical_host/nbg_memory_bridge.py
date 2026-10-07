@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from typing import Any
 
@@ -84,6 +85,23 @@ def _require_hex_sha256(value: Any, field: str) -> str:
     return value.lower()
 
 
+def _validate_journal_integrity(record: dict[str, Any]) -> str:
+    current_hash = _require_hex_sha256(record.get("current_hash"), "current_hash")
+    body = dict(record)
+    body.pop("current_hash", None)
+    expected = hashlib.sha256(
+        json.dumps(
+            body,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    if current_hash != expected:
+        raise ValueError("PhiPie episode journal record hash mismatch")
+    return current_hash
+
+
 def journal_record_to_nbg_memory(
     journal_record: dict[str, Any],
     *,
@@ -123,10 +141,10 @@ def journal_record_to_nbg_memory(
     if not isinstance(episode_id, str) or not episode_id:
         raise ValueError("episode_id is required")
 
-    journal_hash = _require_hex_sha256(
-        journal_record.get("current_hash"),
-        "current_hash",
-    )
+    journal_hash = _validate_journal_integrity(journal_record)
+
+    if envelope.get("episode_id") != episode_id:
+        raise ValueError("episode and memory envelope identity mismatch")
 
     start_sequence = episode.get("start_sequence")
     end_sequence = episode.get("end_sequence")
