@@ -31,3 +31,12 @@ authority checks. The repository still contains no real GPIO actuator driver.
 The experimental `physical_host/pi_telemetry.py` adapter reads local Raspberry Pi/Linux host observations into receipts without becoming a Plane A safety sensor or exposing an actuator method.
 
 See [`docs/RPI_READONLY_TELEMETRY.md`](../docs/RPI_READONLY_TELEMETRY.md).
+
+## PhiPie health baseline
+
+The experimental `physical_host/health_baseline.py` layer builds an explainable
+local baseline from read-only Pi telemetry and reports later drift as diagnostic
+evidence only. It never changes Plane A safety state and exposes no actuator
+execution surface.
+
+See [`docs/PI_HEALTH_BASELINE.md`](../docs/PI_HEALTH_BASELINE.md).
