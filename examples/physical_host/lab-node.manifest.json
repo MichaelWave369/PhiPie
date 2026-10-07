@@ -1,0 +1,29 @@
+{
+  "contract": "phi-physical-host/v0.1",
+  "host_id": "phipie-sim-001",
+  "platform": "synthetic",
+  "profile": "lab-node",
+  "planes": {
+    "identity": "present",
+    "power": "observed",
+    "thermal": "observed",
+    "environment": "observed",
+    "safety": "deterministic-local",
+    "service": "declared",
+    "action": "bounded",
+    "receipts": "local-first"
+  },
+  "compute": {
+    "serviceable": true
+  },
+  "battery": {
+    "present": false,
+    "serviceable": true
+  },
+  "network_loss_safe": true,
+  "cloud_required_for_safety": false,
+  "authority": {
+    "hazardous_action_requires_plane_a": true,
+    "phibot_direct_physical_authority": false
+  }
+}
