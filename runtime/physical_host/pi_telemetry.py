@@ -62,10 +62,8 @@ def _default_run_command(argv: list[str]) -> str | None:
 def _clean(value: str | None) -> str | None:
     if value is None:
         return None
-    cleaned = value.replace("\x00", "").replace("\\\\x00", "").strip()
+    cleaned = value.replace("\x00", "").replace("\\x00", "").strip()
     return cleaned or None
-
-
 def _sha256_text(value: str | None) -> str | None:
     cleaned = _clean(value)
     if cleaned is None:
@@ -213,8 +211,8 @@ class RaspberryPiTelemetryAdapter:
         raw = self.read_text("/proc/device-tree/compatible")
         if raw is None:
             return []
-        normalized = raw.replace("\\\\x00", "\x00")\n        return [part.strip() for part in normalized.split("\x00") if part.strip()]
-
+        normalized = raw.replace("\\x00", "\x00")
+        return [part.strip() for part in normalized.split("\x00") if part.strip()]
     def _serial(self) -> str | None:
         direct = _clean(self.read_text("/proc/device-tree/serial-number"))
         if direct:
