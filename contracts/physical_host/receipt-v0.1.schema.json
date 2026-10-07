@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enter-the-field.invalid/schemas/phi-physical-host/receipt-v0.1.schema.json",
+  "title": "Phi Physical Host Receipt v0.1",
+  "type": "object",
+  "required": [
+    "id",
+    "timestamp",
+    "host_id",
+    "source_plane",
+    "event_kind",
+    "state_before",
+    "state_after",
+    "inputs",
+    "decision",
+    "reason",
+    "software",
+    "evidence_refs",
+    "previous_hash",
+    "current_hash",
+    "share_level"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1
+    },
+    "host_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_plane": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state_before": {
+      "type": "string"
+    },
+    "state_after": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "object"
+    },
+    "decision": {
+      "type": "string"
+    },
+    "previous_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "current_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "share_level": {
+      "type": "string"
+    }
+  }
+}
