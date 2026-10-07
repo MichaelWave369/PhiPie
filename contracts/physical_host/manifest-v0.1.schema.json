@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enter-the-field.invalid/schemas/phi-physical-host/manifest-v0.1.schema.json",
+  "title": "Phi Physical Host Manifest v0.1",
+  "type": "object",
+  "required": [
+    "contract",
+    "host_id",
+    "platform",
+    "profile",
+    "planes",
+    "network_loss_safe",
+    "cloud_required_for_safety",
+    "authority"
+  ],
+  "properties": {
+    "contract": {
+      "const": "phi-physical-host/v0.1"
+    },
+    "host_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "planes": {
+      "type": "object",
+      "required": [
+        "identity",
+        "power",
+        "thermal",
+        "environment",
+        "safety",
+        "service",
+        "action",
+        "receipts"
+      ]
+    },
+    "network_loss_safe": {
+      "const": true
+    },
+    "cloud_required_for_safety": {
+      "const": false
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "hazardous_action_requires_plane_a",
+        "phibot_direct_physical_authority"
+      ],
+      "properties": {
+        "hazardous_action_requires_plane_a": {
+          "const": true
+        },
+        "phibot_direct_physical_authority": {
+          "const": false
+        }
+      }
+    }
+  }
+}
