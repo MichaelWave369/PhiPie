@@ -70,3 +70,10 @@ jobs:
           assert r['physical_deployment_authority'] is False
           assert r['status'] in ('HOLD', 'OBSERVED')
           PY
+
+      - name: Two-node pilot CLI help (no network, no field keys)
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.two_node_cli --help > /tmp/trail-two-node-help.txt
+          grep -q "init-ledger" /tmp/trail-two-node-help.txt
+          grep -q "receive" /tmp/trail-two-node-help.txt

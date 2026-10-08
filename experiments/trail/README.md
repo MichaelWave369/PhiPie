@@ -83,3 +83,12 @@ operator-approved **bounded private-IP ICMP** probes. An `sense.radio` SOMA
 message is emitted only as an **unsigned draft** if complete passive evidence
 is available; it does not create trusted credentials or push observations into
 live SuperPhiVessel. GitHub CI exercises fake command outputs, not hardware.
+
+## Two-node signed radio evidence pilot v0.1
+
+The [two-node evidence pilot](TWO_NODE_PILOT.md) explicitly provisions a
+**lab-only symmetric key**, creates owner-only signed radio-evidence files
+on the sender, and verifies them on a receiver using a SQLite replay ledger
+that survives normal process restarts. **Transfer is manual and external.**
+No network daemon, live Porch/SOMA wiring, or Pi hardware qualification
+is introduced. This is a small laboratory step toward a two-PhiPie field trial.
