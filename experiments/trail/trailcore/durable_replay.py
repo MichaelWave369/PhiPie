@@ -7,6 +7,7 @@ hardware monotonic counter. Do not silently reinitialize an existing lost DB.
 from __future__ import annotations
 
 from pathlib import Path
+from contextlib import closing
 import os
 import sqlite3
 
@@ -31,7 +32,7 @@ class DurableReplayWindow:
             raise FileNotFoundError("replay database missing; initialize explicitly")
         self._check_file()
         try:
-            with self._connect() as db:
+            with closing(self._connect()) as db:
                 names = {row[0] for row in db.execute(
                     "SELECT name FROM sqlite_master WHERE type = 'table'")}
                 if not {"highwater", "observation_ids", "ledger_marker"} <= names:

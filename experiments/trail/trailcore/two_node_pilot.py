@@ -143,6 +143,14 @@ def receive_signed_radio(packet: Any, *, site_id: str, node_id: str,
 
     Returns receipt only: never a tool executor, raw radio output or actuator.
     """
+    # Do not let a non-radio envelope advance the radio-only replay sequence.
+    # Non-dict packets are refused before any file/key I/O or ledger mutation.
+    if not isinstance(packet, dict) or packet.get("organ") != "sense.radio":
+        return {
+            "status": "HOLD", "reason": "NOT_RADIO_ORGAN",
+            "receipt": None, "networkChangeAllowed": False,
+            "roverMotionAllowed": False,
+        }
     secret = read_lab_key(key_file)
     replay = DurableReplayWindow(replay_db)
     receiver = SomaIntake({key_id: KeyBinding(site_id, node_id, secret)}, replay=replay)

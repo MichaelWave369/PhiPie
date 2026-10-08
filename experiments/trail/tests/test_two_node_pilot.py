@@ -194,6 +194,15 @@ class PilotTests(unittest.TestCase):
         packet, _ = self.report()
         self.assertEqual(self.accept(packet, node="another-node")["reason"], "UNPROVISIONED_PEER")
 
+    def test_nonradio_message_never_consumes_sequence(self):
+        packet, _ = self.report()
+        nonradio = copy.deepcopy(packet)
+        nonradio["organ"] = "sense.power"
+        result = self.accept(nonradio)
+        self.assertEqual(result["status"], "HOLD")
+        self.assertEqual(result["reason"], "NOT_RADIO_ORGAN")
+        self.assertEqual(self.accept(packet)["status"], "ACCEPTED_ADVISORY_ONLY")
+
     def test_wrong_shared_key_fails(self):
         packet, _ = self.report()
         other = Path(self.temp.name) / "other.key"
