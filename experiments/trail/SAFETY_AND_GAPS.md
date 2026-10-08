@@ -58,3 +58,13 @@ queries and bounded, explicitly operator-approved ICMP packets on a
 private network. No radio or router writes are permitted. These measurements
 remain locally observed/unattested, and missing or unsupported driver
 statistics block SOMA packet drafting. No field radio/routed-mesh claims.
+
+## Two-node lab handoff limits (PR #15)
+
+See [TWO_NODE_PILOT.md](TWO_NODE_PILOT.md).
+The pilot's HMAC proves a shared lab key was used, not secure peer/device
+identity or accurate physical measurements. Its durable SQLite replay ledger
+handles normal restarts but cannot stop rollback/replacement of the disk.
+No built-in transport exists. Payload exchange needs independently secured
+manual transfer, permission to observe, current clocks and protected secrets.
+Positive receipt is never permission to change radio configuration or drive.
