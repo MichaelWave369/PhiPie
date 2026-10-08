@@ -68,7 +68,12 @@ def _id(v: Any) -> bool:
 
 
 def _finite(v: Any) -> bool:
-    return type(v) in (int, float) and math.isfinite(v)
+    if type(v) not in (int, float):
+        return False
+    try:
+        return math.isfinite(v)
+    except (OverflowError, TypeError, ValueError):
+        return False
 
 
 def _safe_measurement(organ: str, measurement: Any, node_id: str) -> bool:
@@ -162,7 +167,7 @@ class SomaIntake:
         }
 
     def receive(self, packet: Any, *, now_s: float) -> dict[str, Any]:
-        if not _finite(now_s):
+        if not _finite(now_s) or now_s < 0:
             return self._refuse("INVALID_CLOCK")
         if not isinstance(packet, dict):
             return self._refuse("INVALID_PACKET")
@@ -182,7 +187,7 @@ class SomaIntake:
         if packet["authority"] != AUTHORITY or not isinstance(packet["authority"], dict):
             return self._refuse("AUTHORITY_ESCALATION")
         ts, seq = packet["observed_at_s"], packet["sequence"]
-        if not _finite(ts) or ts > now_s or now_s - ts > self.max_age_s:
+        if not _finite(ts) or ts < 0 or ts > now_s or now_s - ts > self.max_age_s:
             return self._refuse("STALE_OR_INVALID_TIME")
         if type(seq) is not int or not 1 <= seq < 2**53:
             return self._refuse("INVALID_SEQUENCE")

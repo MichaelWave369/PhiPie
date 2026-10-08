@@ -129,6 +129,17 @@ class SomaObservationTests(unittest.TestCase):
     def test_invalid_clock_refused(self):
         self.assertEqual(intake().receive(make_packet(), now_s=float("nan"))["reason"], "INVALID_CLOCK")
 
+    def test_negative_epoch_refused(self):
+        self.assertEqual(intake().receive(make_packet(), now_s=-1)["reason"], "INVALID_CLOCK")
+        p = make_packet(observed_at_s=-0.1)
+        self.assertEqual(intake().receive(p, now_s=1001)["reason"], "STALE_OR_INVALID_TIME")
+
+    def test_extreme_integer_fails_closed(self):
+        p = make_packet()
+        p["measurement"]["latency_ms"] = 10**1000
+        self.assertEqual(intake().receive(p, now_s=1001)["reason"], "UNSAFE_MEASUREMENT")
+        self.assertEqual(intake().receive(make_packet(), now_s=10**1000)["reason"], "INVALID_CLOCK")
+
     def test_stale_refused(self):
         self.assertEqual(intake().receive(make_packet(), now_s=1200)["reason"], "STALE_OR_INVALID_TIME")
 
