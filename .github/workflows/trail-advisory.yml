@@ -1,0 +1,41 @@
+name: PhiPie Trail advisory prototype
+
+on:
+  push:
+    paths:
+      - 'experiments/trail/**'
+      - '.github/workflows/trail-advisory.yml'
+  pull_request:
+    paths:
+      - 'experiments/trail/**'
+      - '.github/workflows/trail-advisory.yml'
+
+jobs:
+  offline-trail-advisory:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run offline tests (no physical or network adapters)
+        working-directory: experiments/trail
+        run: python -m unittest discover -s tests -v
+      - name: Verify deterministic demo outcomes
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.demo nominal > /tmp/trail-nominal.json
+          python -m trailcore.demo degraded > /tmp/trail-degraded.json
+          python -m trailcore.demo stale > /tmp/trail-stale.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          expected = {'nominal': 'REVIEW_CANDIDATE', 'degraded': 'HOLD', 'stale': 'HOLD'}
+          for scenario, state in expected.items():
+              result = json.loads(Path(f'/tmp/trail-{scenario}.json').read_text())
+              assert result['state'] == state, (scenario, result['state'])
+              for field in ('physical_deployment_authorized', 'rover_motion_authorized', 'network_config_change_authorized', 'authenticated_end_to_end_proof'):
+                  assert result[field] is False, (scenario, field)
+          PY

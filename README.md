@@ -58,6 +58,13 @@ capability != authority
 - **PhiPie Node** — headless governed agent/edge node with remote inspection and mission execution.
 - **PhiPie Tank** — multiple governed nodes used as a physical Think Tank substrate.
 
+## Trail research (experimental)
+
+The [ΦTrail read-only corridor assessor](experiments/trail/README.md) is an
+isolated research module for a proposed PhiPie relay + Park Rover network.
+Its synthetic demos and tests **do not** establish working mesh transport,
+physical deployment, or any new Pi hardware qualification.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

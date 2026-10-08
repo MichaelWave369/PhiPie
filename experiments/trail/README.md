@@ -1,0 +1,63 @@
+# ΦTrail: PhiPie Trail Governor v0.1
+
+**Status: EXPERIMENTAL / OFFLINE ADVISORY ONLY / NO HARDWARE CONTROL**
+
+ΦTrail is a standalone, standard-library Python proof of concept for reviewing an ordered
+gateway → PhiPie relay(s) → Park Rover corridor. It comes from the
+`PhiPie_Trail_Rescue_v0.1.zip` rescue exercise and does not change PhiPie image building,
+the PhiOS runtime, any Pi radio, or Park Rover's safety controller.
+
+> Capability is not authority. Healthy telemetry never permits deployment, driving,
+> router changes, or claims of emergency communications coverage.
+
+## Try it (Python 3.10+)
+
+```bash
+cd experiments/trail
+python -m trailcore.demo nominal
+python -m trailcore.demo degraded
+python -m trailcore.demo stale
+python -m unittest discover -s tests -v
+```
+
+Expected states: `nominal → REVIEW_CANDIDATE`; `degraded/stale → HOLD`.
+Even the nominal result is **human review**, not authorization.
+Example metrics are synthetic and represent no actual field measurements.
+
+## What is included
+
+- `trailcore/governor.py`: deterministic assessment of ordered links, missing/duplicate
+  observations, freshness, latency, loss, throughput, relay battery, and operator/site
+  permission assertions. Always returns hardware and network authority flags as false.
+- `trailcore/rover_bridge.py`: defensive normalization of a Park Rover v6.7 health
+  beacon's age, shape, safety claims and checksum. A checksum is **not authentication**.
+- `trailcore/demo.py`: three completely synthetic, reproducible scenarios.
+- `tests/`: offline invalid data, stale telemetry, tampering, permission, topology,
+  no-actuation and source-boundary checks.
+- `ARCHITECTURE.md`, `FIELD_VALIDATION.md`, `SAFETY_AND_GAPS.md`: extraction,
+  hardware qualification plan and reasons this remains advisory.
+- `SOURCE_MAP.md`: source archive provenance and the code intentionally **not** imported.
+
+## Why the reference sources are not blindly vendored
+
+The rescue ZIP contains 23 original TPO/Bandwidth Governor and Park Rover reference
+files. The source set includes an unverified UniFi stub, unsafe legacy API paths and
+legacy license provenance requiring review. Those archival files remain in the
+original rescue ZIP rather than silently becoming active production code in this
+public MIT repository. The **new** advisory module and its tests are included here.
+
+To inspect or integrate the archived references, use the original local
+`PhiPie_Trail_Rescue_v0.1.zip`, verify its SHA-256 listed in `SOURCE_MAP.md`, and
+review licensing, authentication, authorization and rollback separately.
+
+## No unsupported claims
+
+This package does **not** implement a routed Wi-Fi mesh, a LoRa transport, validated
+Starlink backhaul, Infinite Porch peer integration, authenticated evidence, AI routing
+control, a rover dispenser, autonomous movement, emergency coverage, or link-health
+measurements from a physical device. Sum of hop latencies / minimum hop throughput
+are diagnostic proxies, **not measured end-to-end performance**.
+
+This is an **optional experiment**, not a new qualification rung. PHIPIE-03 remains
+a field candidate until qualified on real Raspberry Pi 5 hardware. Nothing here
+changes the existing PhiPie roadmap or claims.
