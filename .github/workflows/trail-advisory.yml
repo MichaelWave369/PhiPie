@@ -39,3 +39,19 @@ jobs:
               for field in ('physical_deployment_authorized', 'rover_motion_authorized', 'network_config_change_authorized', 'authenticated_end_to_end_proof'):
                   assert result[field] is False, (scenario, field)
           PY
+
+      - name: Verify ΦSOMA synthetic signed sensor -> Trail advisory handoff
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.soma_demo > /tmp/soma-lab.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path('/tmp/soma-lab.json').read_text())
+          assert r['mode'] == 'OFFLINE_SYNTHETIC_READ_ONLY'
+          assert r['receipt']['authentication'] == 'LAB_KEYRING_HMAC_ONLY'
+          assert r['receipt']['somaRuntimeWired'] is False
+          assert r['corridor']['state'] == 'REVIEW_CANDIDATE'
+          for k in ('physical_deployment_authorized', 'rover_motion_authorized', 'network_config_change_authorized', 'authenticated_end_to_end_proof'):
+              assert r['corridor'][k] is False, k
+          PY

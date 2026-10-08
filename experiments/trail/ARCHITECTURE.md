@@ -68,3 +68,11 @@ Raspberry Pi 5 physical qualification rung remains unchanged.
   and spotter; cannot be bypassed by network intelligence.
 
 The first real integration must be **observation-only**.
+
+## Proposed distributed Φ SOMA evidence adapter (offline, experimental)
+
+The [ΦTrail × SOMA contract](SOMA_DISTRIBUTED.md) now demonstrates one
+bounded, HMAC-checked *lab* observation flowing into a Trail `LinkObservation`.
+The six proposed new organs are not presently wired into the SuperPhiVessel
+runtime; keys and anti-replay are intentionally unsuitable for unattended field
+deployment. All evidence remains advisory. No grant crosses this seam.
