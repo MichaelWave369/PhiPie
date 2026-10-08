@@ -77,3 +77,17 @@ jobs:
           python -m trailcore.two_node_cli --help > /tmp/trail-two-node-help.txt
           grep -q "init-ledger" /tmp/trail-two-node-help.txt
           grep -q "receive" /tmp/trail-two-node-help.txt
+
+      - name: Validate field witness CLI without hardware
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.field_cli --help > /tmp/trail-field-help.txt
+          grep -q "assess" /tmp/trail-field-help.txt
+          python - <<'PY'
+          from trailcore.field_witness import template, assess_witness
+          result = assess_witness(template())
+          assert result['status'] == 'HOLD'
+          assert result['hardware_physically_qualified'] is False
+          assert result['mesh_transport_verified'] is False
+          assert result['action_authorized'] is False
+          PY

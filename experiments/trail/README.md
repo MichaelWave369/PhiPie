@@ -92,3 +92,11 @@ on the sender, and verifies them on a receiver using a SQLite replay ledger
 that survives normal process restarts. **Transfer is manual and external.**
 No network daemon, live Porch/SOMA wiring, or Pi hardware qualification
 is introduced. This is a small laboratory step toward a two-PhiPie field trial.
+
+## Supervised two-node field evidence review kit v0.1
+
+The [ΦTrail Field Witness Kit](FIELD_WITNESS.md) adds a privacy-minimized,
+read-only Linux host snapshot and strict two-Pi operator evidence assessment.
+It is a **manual test checklist and validator**, not physical qualification,
+live mesh deployment, or a security attestation. No existing software
+qualification status or runtime authority changes.
