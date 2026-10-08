@@ -4,7 +4,7 @@
 
 This is the first OS-facing measurement adapter in PhiPie Trail. It uses
 Linux `iw` to **observe** available Wi-Fi interfaces, link RSSI, current
-TX PHY rate and channel frequency. If a *single station* exposes two usable
+TX PHY rate and channel frequency. If the *same single station* exposes two usable
 transmit-packet and retry-counter snapshots, it estimates an attempted-
 transmission retry fraction. Some drivers do **not** expose station counters
 on a managed interface; then `retry_pct=null` and the report stays PARTIAL.

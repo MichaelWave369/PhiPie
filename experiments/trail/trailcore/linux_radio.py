@@ -28,7 +28,7 @@ TYPE_RE = re.compile(r"^\s*type\s+([a-zA-Z0-9_-]+)\s*$", re.M)
 SIGNAL_RE = re.compile(r"^\s*signal:\s*(-?\d+(?:\.\d+)?)\s*dBm\s*$", re.M)
 BITRATE_RE = re.compile(r"^\s*tx bitrate:\s*(\d+(?:\.\d+)?)\s*MBit/s\b", re.M)
 FREQ_RE = re.compile(r"^\s*freq:\s*(\d{3,5})\s*$", re.M)
-STATION_RE = re.compile(r"^\s*Station\s+[0-9A-Fa-f:]{17}(?:\s|$)", re.M)
+STATION_RE = re.compile(r"^\s*Station\s+([0-9A-Fa-f:]{17})(?:\s|$)", re.M)
 TX_PACKETS_RE = re.compile(r"^\s*tx packets:\s*(\d+)\s*$", re.M)
 TX_RETRIES_RE = re.compile(r"^\s*tx retries:\s*(\d+)\s*$", re.M)
 PING_STATS_RE = re.compile(r"(\d+) packets transmitted, (\d+) (?:packets )?received, (\d+(?:\.\d+)?)% packet loss")
@@ -115,14 +115,20 @@ def list_radios(runner: Any = None) -> dict[str, Any]:
     return {**_clean_result("OBSERVED"), "interfaces": unique}
 
 
-def _station_counters(output: str) -> tuple[int, int] | None:
-    """Only one station permitted; multi-station aggregates need separate attribution."""
-    if len(STATION_RE.findall(output)) != 1:
+def _station_counters(output: str) -> tuple[str, int, int] | None:
+    """One transient peer, two bounded counters; peer ID never leaves process."""
+    peers = STATION_RE.findall(output)
+    if len(peers) != 1:
         return None
     pk, retries = TX_PACKETS_RE.search(output), TX_RETRIES_RE.search(output)
     if not pk or not retries:
         return None
-    return int(pk.group(1)), int(retries.group(1))
+    if len(pk.group(1)) > 20 or len(retries.group(1)) > 20:
+        return None
+    packet_count, retry_count = int(pk.group(1)), int(retries.group(1))
+    if packet_count > 2**64 - 1 or retry_count > 2**64 - 1:
+        return None
+    return peers[0].lower(), packet_count, retry_count
 
 
 def _link_fields(output: str) -> dict[str, Any]:
@@ -179,8 +185,8 @@ def observe_radio(
     first = _station_counters(before[1]) if before is not None and before[0] == 0 else None
     last = _station_counters(after[1]) if after is not None and after[0] == 0 else None
     retries_pct, sample_count = None, None
-    if first and last:
-        packet_delta, retry_delta = last[0] - first[0], last[1] - first[1]
+    if first and last and first[0] == last[0]:
+        packet_delta, retry_delta = last[1] - first[1], last[2] - first[2]
         attempts = packet_delta + retry_delta
         if packet_delta > 0 and retry_delta >= 0 and 3 <= attempts <= 1_000_000:
             retries_pct = round((retry_delta / attempts) * 100, 3)
@@ -191,6 +197,10 @@ def observe_radio(
                         reason=None if complete else "RETRY_OR_SIGNAL_UNAVAILABLE"),
         "interface": interface, "observed_at_s": observed_at,
         "metrics": {**fields, "retry_pct": retries_pct, "sample_count": sample_count},
+        "available_observations": sorted(
+            k for k, v in {**fields, "retry_pct": retries_pct, "sample_count": sample_count}.items()
+            if v is not None
+        ),
         "provenance": {
             "reader": "linux-iw-readonly",
             "source": "iw dev/link/station dump",

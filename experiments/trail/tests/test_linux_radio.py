@@ -132,6 +132,25 @@ class LinuxRadioObserverTests(unittest.TestCase):
         runner.overrides[("iw", "dev", "wlan0", "station", "dump")] = (0, "")
         self.assertEqual(sample(runner)["status"], "PARTIAL")
 
+    def test_station_peer_change_never_combines_counters(self):
+        class ChangingPeerRunner(FakeRunner):
+            def run(self, argv, timeout_s=3.0):
+                if tuple(argv) == ("iw", "dev", "wlan0", "station", "dump"):
+                    self.station_reads += 1
+                    return 0, STATION_1 if self.station_reads == 1 else STATION_2.replace(
+                        "aa:bb:cc:dd:ee:ff", "11:22:33:44:55:66")
+                return super().run(argv, timeout_s)
+        r = sample(ChangingPeerRunner())
+        self.assertEqual(r["status"], "PARTIAL")
+        self.assertIsNone(r["metrics"]["retry_pct"])
+
+    def test_oversized_station_counters_are_unknown(self):
+        huge = STATION_1.replace("tx packets: 100", "tx packets: " + "9" * 10000)
+        runner = FakeRunner({("iw", "dev", "wlan0", "station", "dump"): (0, huge)})
+        report = sample(runner)
+        self.assertEqual(report["status"], "PARTIAL")
+        self.assertIsNone(report["metrics"]["retry_pct"])
+
     def test_stale_time_refused(self):
         r = rf.observe_radio("wlan0", runner=FakeRunner(),
                              sleeper=lambda _: None, clock=lambda: float("nan"))
