@@ -255,8 +255,12 @@ class EvidenceBindingTests(unittest.TestCase):
         self.assertIn("PRIVATE_EVIDENCE_DIRECTORY_UNSAFE", self.run_verify()["reasons"])
 
     def test_evidence_file_oversize_refused(self):
-        item = {"blob": "X" * 17000}
-        self.rewrite("receiver_host", item)
+        # Bypass the deliberately size-limited normal writer to create hostile input.
+        p = self.private / self.manifest["files"]["receiver_host"]
+        p.unlink()
+        p.write_bytes(b"X" * 17000)
+        if os.name == "posix":
+            p.chmod(0o600)
         self.assertIn("RECEIVER_HOST_UNREADABLE_OR_UNSAFE", self.run_verify()["reasons"])
 
     def test_json_duplicate_keys_refused(self):
