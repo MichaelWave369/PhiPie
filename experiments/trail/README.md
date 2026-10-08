@@ -100,3 +100,11 @@ read-only Linux host snapshot and strict two-Pi operator evidence assessment.
 It is a **manual test checklist and validator**, not physical qualification,
 live mesh deployment, or a security attestation. No existing software
 qualification status or runtime authority changes.
+
+## Private evidence binding v0.1
+
+The [local evidence binder](EVIDENCE_BINDING.md) checks seven protected
+host/radio/packet/receipt/path JSON files against the operator's #16
+field-witness hash references. It refuses missing, tampered and unsafe
+files and emits only file-consistency status, **not proof that hardware
+actually ran the tests**. It performs no network activity or HMAC key exchange.

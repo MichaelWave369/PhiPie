@@ -91,3 +91,19 @@ jobs:
           assert result['mesh_transport_verified'] is False
           assert result['action_authorized'] is False
           PY
+
+      - name: Verify local-only evidence binder CLI with no physical hardware
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.evidence_cli --help > /tmp/trail-bind-help.txt
+          grep -q "inspect" /tmp/trail-bind-help.txt
+          python - <<'PY'
+          from trailcore.evidence_binding import manifest_template, verify_local_bundle
+          from trailcore.field_witness import template
+          manifest = manifest_template()
+          r = verify_local_bundle(template(), manifest, '/not-a-real-private-evidence-dir')
+          assert r['status'] == 'HOLD'
+          assert r['physical_hardware_qualified'] is False
+          assert r['hmac_cryptographically_verified'] is False
+          assert r['network_change_authorized'] is False
+          PY
