@@ -55,3 +55,18 @@ jobs:
           for k in ('physical_deployment_authorized', 'rover_motion_authorized', 'network_config_change_authorized', 'authenticated_end_to_end_proof'):
               assert r['corridor'][k] is False, k
           PY
+
+      - name: Verify radio observer's CLI refuses unsupported host (offline)
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.radio_cli --list > /tmp/trail-radio-list.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path('/tmp/trail-radio-list.json').read_text())
+          assert r['readonly'] is True
+          assert r['motor_authority'] is False
+          assert r['network_change_authority'] is False
+          assert r['physical_deployment_authority'] is False
+          assert r['status'] in ('HOLD', 'OBSERVED')
+          PY

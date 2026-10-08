@@ -74,3 +74,12 @@ Run `python -m trailcore.soma_demo` from this directory to see the synthetic
 signed observation become an advisory corridor review. This is not a live
 SuperPhiVessel SOMA integration, nor a qualified radio observer, physical network,
 secure field identity system, or permission to actuate.
+
+## Physical read-only Linux radio observer v0.1
+
+[PR #14 radio observer](RADIO_OBSERVER.md) adds a real Linux `iw`-based
+interface/link/counter observer, strict missing-data handling, and optional
+operator-approved **bounded private-IP ICMP** probes. An `sense.radio` SOMA
+message is emitted only as an **unsigned draft** if complete passive evidence
+is available; it does not create trusted credentials or push observations into
+live SuperPhiVessel. GitHub CI exercises fake command outputs, not hardware.
