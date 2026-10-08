@@ -50,3 +50,11 @@ They must not be imported as executable production dependencies. Keep
 license review and full security review before any public source vendoring.
 
 PhiPie PHIPIE-03 status and existing CI are not modified by this experiment.
+
+## Linux observer follow-on (experimental, PR #14)
+
+`RADIO_OBSERVER.md` describes optional read-only Linux `iw` link/driver
+queries and bounded, explicitly operator-approved ICMP packets on a
+private network. No radio or router writes are permitted. These measurements
+remain locally observed/unattested, and missing or unsupported driver
+statistics block SOMA packet drafting. No field radio/routed-mesh claims.
