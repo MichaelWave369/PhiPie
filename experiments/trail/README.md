@@ -126,3 +126,11 @@ adds an optional `iperf3` client with a three-second, one-stream, **soft**
 running server). Local results are checked against the eight-file ICMP
 witness chain. It does not attest device identity, enforce hard QoS,
 establish a relay path, certify capacity or change any network device.
+
+## Field launch kit v0.1 (PR #20)
+
+The [two-Pi operator launch kit](FIELD_LAUNCH.md) provides `doctor` and
+`collect` commands for each physical Raspberry Pi 5 / CM5. It is a
+read-only preflight plus a one-shot, private host/radio evidence capture.
+Neither command generates active network traffic, configures anything,
+authenticates two boards, or certifies a physical test.
