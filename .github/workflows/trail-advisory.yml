@@ -130,3 +130,25 @@ jobs:
           assert review['physical_hardware_qualified'] is False
           assert review['network_change_authorized'] is False
           PY
+
+      - name: Refuse unapproved TCP and verify nine-file binder CLI offline
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.tcp_cli --help > /tmp/trail-tcp-help.txt
+          python -m trailcore.tcp_bundle_cli --help > /tmp/trail-tcp-binder-help.txt
+          grep -q "approve-tcp" /tmp/trail-tcp-help.txt
+          python - <<'PY'
+          from trailcore.tcp_observer import observe_tcp
+          from trailcore.tcp_bundle import tcp_manifest_template, verify_tcp_bundle
+          from trailcore.field_witness import template
+          class NeverRun:
+              def run(self, *a, **kw):
+                  raise RuntimeError("unapproved TCP probe executed")
+          denied = observe_tcp("192.168.1.20", approved=False, runner=NeverRun())
+          assert denied["status"] == "HOLD"
+          assert len(tcp_manifest_template()["files"]) == 9
+          result = verify_tcp_bundle(template(), tcp_manifest_template(), "/no-field-dir")
+          assert result["status"] == "HOLD"
+          assert result["hardware_qualified"] is False
+          assert result["network_change_authorized"] is False
+          PY
