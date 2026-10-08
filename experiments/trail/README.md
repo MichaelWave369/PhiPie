@@ -108,3 +108,12 @@ host/radio/packet/receipt/path JSON files against the operator's #16
 field-witness hash references. It refuses missing, tampered and unsafe
 files and emits only file-consistency status, **not proof that hardware
 actually ran the tests**. It performs no network activity or HMAC key exchange.
+
+## Bounded path probe evidence (experimental PR #18)
+
+The [bounded ICMP-to-evidence pipeline](PATH_PROBE.md) lets an operator
+explicitly generate a three-packet *private-network* ping and capture
+both a local parsed probe receipt and a legacy-compatible path summary.
+A distinct eight-file binder cross-checks the actual parsed probe data
+against the private #17 field record. It cannot attest hardware,
+verify true routes or infer throughput, and grants no new authority.

@@ -107,3 +107,26 @@ jobs:
           assert r['hmac_cryptographically_verified'] is False
           assert r['network_change_authorized'] is False
           PY
+
+      - name: Verify bounded probe and eight-file binder refusal offline
+        working-directory: experiments/trail
+        run: |
+          python -m trailcore.path_probe_cli --help > /tmp/trail-probe-help.txt
+          python -m trailcore.probe_bundle_cli --help > /tmp/trail-bundle-help.txt
+          grep -q "approve-probe" /tmp/trail-probe-help.txt
+          python - <<'PY'
+          from trailcore.path_probe import collect_icmp_pair
+          from trailcore.probe_bundle import probe_manifest_template, verify_probe_bundle
+          from trailcore.field_witness import template
+          class NeverRun:
+              def run(self, *args, **kw):
+                  raise RuntimeError("unapproved probe tried to execute")
+          result = collect_icmp_pair("192.168.1.1", "wlan0", approved=False, runner=NeverRun())
+          assert result['status'] == 'HOLD'
+          m = probe_manifest_template()
+          assert len(m['files']) == 8
+          review = verify_probe_bundle(template(), m, '/no-private-field-evidence')
+          assert review['status'] == 'HOLD'
+          assert review['physical_hardware_qualified'] is False
+          assert review['network_change_authorized'] is False
+          PY
