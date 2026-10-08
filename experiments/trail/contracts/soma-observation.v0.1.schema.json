@@ -1,0 +1,334 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MichaelWave369/PhiPie/blob/main/experiments/trail/contracts/soma-observation.v0.1.schema.json",
+  "title": "PhiPie Trail SOMA observation v0.1 (offline advisory only)",
+  "description": "A strict per-sensor signed envelope. A schema does not authenticate its claimed source. Check HMAC, site/node binding, freshness and replay in the same trusted process.",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "const": "phipie-trail-soma-observation/v0.1"
+        },
+        "site_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+        },
+        "node_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+        },
+        "observation_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+        },
+        "organ": {
+          "enum": [
+            "sense.radio",
+            "sense.network",
+            "sense.power",
+            "sense.environment",
+            "sense.location",
+            "eyes.rover"
+          ]
+        },
+        "observed_at_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "measurement": {
+          "type": "object"
+        },
+        "authority": {
+          "type": "object",
+          "properties": {
+            "grantsAuthority": {
+              "const": false
+            },
+            "actionAuthorized": {
+              "const": false
+            },
+            "mayInvokeTools": {
+              "const": false
+            },
+            "mayIssueHardwareCommands": {
+              "const": false
+            },
+            "requiresIndependentToolAuthorization": {
+              "const": true
+            },
+            "safetyPlaneUnaffected": {
+              "const": true
+            }
+          },
+          "required": [
+            "grantsAuthority",
+            "actionAuthorized",
+            "mayInvokeTools",
+            "mayIssueHardwareCommands",
+            "requiresIndependentToolAuthorization",
+            "safetyPlaneUnaffected"
+          ],
+          "additionalProperties": false
+        },
+        "signature": {
+          "type": "object",
+          "properties": {
+            "alg": {
+              "const": "HMAC-SHA256"
+            },
+            "key_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+            },
+            "mac_hex": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "alg",
+            "key_id",
+            "mac_hex"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contract",
+        "site_id",
+        "node_id",
+        "observation_id",
+        "organ",
+        "observed_at_s",
+        "sequence",
+        "measurement",
+        "authority",
+        "signature"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "organ": {
+              "const": "sense.radio"
+            },
+            "measurement": {
+              "type": "object",
+              "properties": {
+                "peer_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+                },
+                "rssi_dbm": {
+                  "type": "number",
+                  "minimum": -130,
+                  "maximum": 0
+                },
+                "retry_pct": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "sample_count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                }
+              },
+              "required": [
+                "peer_id",
+                "rssi_dbm",
+                "retry_pct",
+                "sample_count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "organ": {
+              "const": "sense.network"
+            },
+            "measurement": {
+              "type": "object",
+              "properties": {
+                "parent_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+                },
+                "child_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+                },
+                "latency_ms": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 60000
+                },
+                "loss_pct": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "observed_mbps": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100000
+                },
+                "sample_count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                }
+              },
+              "required": [
+                "parent_id",
+                "child_id",
+                "latency_ms",
+                "loss_pct",
+                "observed_mbps",
+                "sample_count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "organ": {
+              "const": "sense.power"
+            },
+            "measurement": {
+              "type": "object",
+              "properties": {
+                "battery_pct": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "supply_mv": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100000
+                },
+                "cpu_temp_c": {
+                  "type": "number",
+                  "minimum": -50,
+                  "maximum": 160
+                }
+              },
+              "required": [
+                "battery_pct",
+                "supply_mv",
+                "cpu_temp_c"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "organ": {
+              "const": "sense.environment"
+            },
+            "measurement": {
+              "type": "object",
+              "properties": {
+                "temperature_c": {
+                  "type": "number",
+                  "minimum": -100,
+                  "maximum": 100
+                },
+                "relative_humidity_pct": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              },
+              "required": [
+                "temperature_c",
+                "relative_humidity_pct"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "organ": {
+              "const": "sense.location"
+            },
+            "measurement": {
+              "type": "object",
+              "properties": {
+                "zone_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "zone_id",
+                "confidence"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "properties": {
+            "organ": {
+              "const": "eyes.rover"
+            },
+            "measurement": {
+              "type": "object",
+              "properties": {
+                "frame_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "media_type": {
+                  "const": "image/jpeg"
+                },
+                "width_px": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8192
+                },
+                "height_px": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8192
+                },
+                "capture_scope": {
+                  "const": "operator_once"
+                }
+              },
+              "required": [
+                "frame_sha256",
+                "media_type",
+                "width_px",
+                "height_px",
+                "capture_scope"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

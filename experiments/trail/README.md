@@ -61,3 +61,16 @@ are diagnostic proxies, **not measured end-to-end performance**.
 This is an **optional experiment**, not a new qualification rung. PHIPIE-03 remains
 a field candidate until qualified on real Raspberry Pi 5 hardware. Nothing here
 changes the existing PhiPie roadmap or claims.
+
+## ΦTrail × Φ SOMA v0.1 (read-only experiment)
+
+The [distributed SOMA observation proposal](SOMA_DISTRIBUTED.md) adds strict
+`sense.radio`, `sense.network`, `sense.power`, `sense.environment`,
+`sense.location`, and `eyes.rover` contracts; bounded ObservationReceipts;
+an offline HMAC lab verifier with process-local replay refusal; and a one-way
+network-observation adapter into Trail Governor.
+
+Run `python -m trailcore.soma_demo` from this directory to see the synthetic
+signed observation become an advisory corridor review. This is not a live
+SuperPhiVessel SOMA integration, nor a qualified radio observer, physical network,
+secure field identity system, or permission to actuate.
