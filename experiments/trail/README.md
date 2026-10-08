@@ -117,3 +117,12 @@ both a local parsed probe receipt and a legacy-compatible path summary.
 A distinct eight-file binder cross-checks the actual parsed probe data
 against the private #17 field record. It cannot attest hardware,
 verify true routes or infer throughput, and grants no new authority.
+
+## Operator-approved TCP evidence v0.1 (PR #19)
+
+The [bounded TCP observer and nine-file evidence binder](TCP_EVIDENCE.md)
+adds an optional `iperf3` client with a three-second, one-stream, **soft**
+1 Mbps target rate to an operator-owned private IP (requires a separately
+running server). Local results are checked against the eight-file ICMP
+witness chain. It does not attest device identity, enforce hard QoS,
+establish a relay path, certify capacity or change any network device.
