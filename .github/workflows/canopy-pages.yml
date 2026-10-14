@@ -41,7 +41,7 @@ jobs:
       - name: Emit generated lockfile for reproducible handoff
         if: github.event_name == 'pull_request'
         run: |
-          node --input-type=commonjs -e "const f=require('fs');const b=Buffer.from(f.readFileSync('package-lock.json')).toString('base64');for(let i=0;i<b.length;i+=3500)console.log('LOCKPART:'+String(i/3500)+':'+b.slice(i,i+3500));"
+          node --input-type=commonjs -e "const f=require('fs');const b=Buffer.from(JSON.stringify(JSON.parse(f.readFileSync('package-lock.json','utf8')))).toString('base64');for(let i=0;i<b.length;i+=3500)console.log('LOCKPART:'+String(i/3500)+':'+b.slice(i,i+3500));"
       - name: Configure Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
