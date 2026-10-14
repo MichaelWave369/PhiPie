@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import CapsuleExplorer from './CapsuleExplorer.jsx';
 
 const NODES = Object.freeze([
   {
@@ -170,7 +171,7 @@ function App() {
     <header className="masthead">
       <a className="wordmark" href="#main"><span className="phi-logo">Φ</span><span>PhiPie <b>Canopy</b></span></a>
       <nav aria-label="Site navigation">
-        <a href="#discover">Discover</a><a href="#nodes">The Nodes</a><a href="#lightbridge">LightBridge</a>
+        <a href="#discover">Discover</a><a href="#nodes">The Nodes</a><a href="#commons">Pocket Commons</a><a href="#lightbridge">LightBridge</a>
         <a className="nav-github" href={REPO} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
       </nav>
     </header>
@@ -212,6 +213,8 @@ function App() {
           </article>
         </div>
       </section>
+
+      <CapsuleExplorer />
 
       <section className="field-section section-space" id="field-guide">
         <div className="section-heading"><div><p className="eyebrow">02 / THE ADVENTURE PROTOCOL</p><h2>Find a box. <em>Find a story.</em></h2><p>What might a real canopy adventure feel like? Tap a step below. All four are a concept roadmap, not claims of deployed features.</p></div></div>

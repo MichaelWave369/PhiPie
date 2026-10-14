@@ -1,0 +1,128 @@
+{
+  "format": "phipie.canopy.capsule.v0.1",
+  "bootstrap": {
+    "target": "commons",
+    "channel_name": "stable",
+    "candidate_id": "canopy-scout-grove-v01",
+    "artifacts": [
+      {
+        "name": "commons_manifest",
+        "path": "commons_data/artifacts/manifest.json",
+        "required": true,
+        "load_order": 10
+      }
+    ]
+  },
+  "artifacts": {
+    "commons_data/artifacts/manifest.json": {
+      "schema": "phipie.canopy.district.v0.1",
+      "district_id": "scout-grove",
+      "title": "The Lantern Grove",
+      "subtitle": "A tiny Infinite Commons neighborhood in a very determined lunchbox.",
+      "welcome": "You have found the little clearing where every traveler is a guest and every question has room to grow.",
+      "provenance": "SIMULATED",
+      "publication_mode": "fictional-public-sample",
+      "start_room": "clearing",
+      "rooms": [
+        {
+          "id": "clearing",
+          "kind": "plaza",
+          "symbol": "✳",
+          "title": "Lantern Clearing",
+          "description": "Warm windows glow between enormous fern fronds. Four paths leave the little plaza. A paper sign reads: NO ACCOUNT REQUIRED, JUST WONDER.",
+          "discovery": "A wooden sign under the lantern says: 'The forest has a network now. The forest would also appreciate it if you drank some water.'",
+          "exits": [
+            {
+              "to": "library",
+              "label": "Follow the book-lit path"
+            },
+            {
+              "to": "doghouse",
+              "label": "Follow the suspiciously happy pawprints"
+            },
+            {
+              "to": "workshop",
+              "label": "Follow the soft humming"
+            },
+            {
+              "to": "garden",
+              "label": "Follow the fireflies"
+            }
+          ]
+        },
+        {
+          "id": "library",
+          "kind": "library",
+          "symbol": "✦",
+          "title": "Professor Phi's Library",
+          "description": "A miniature library is tucked into the roots of an ancient imaginary oak. The shelves hold questions rather than personal information.",
+          "discovery": "Today's field note: 'Observation is evidence, but it is not automatically the whole truth.'",
+          "exits": [
+            {
+              "to": "clearing",
+              "label": "Return to Lantern Clearing"
+            },
+            {
+              "to": "garden",
+              "label": "Visit the listening garden"
+            }
+          ]
+        },
+        {
+          "id": "doghouse",
+          "kind": "relay",
+          "symbol": "✺",
+          "title": "Queso's Relay",
+          "description": "A red-roofed doghouse sports an antenna made from a painted stick. The sign says: APPROVED BARKS ONLY.",
+          "discovery": "Incoming message: WOOF. Integrity status: emotionally compelling, cryptographically unverified.",
+          "exits": [
+            {
+              "to": "clearing",
+              "label": "Return to Lantern Clearing"
+            },
+            {
+              "to": "workshop",
+              "label": "Visit the little workshop"
+            }
+          ]
+        },
+        {
+          "id": "workshop",
+          "kind": "studio",
+          "symbol": "◇",
+          "title": "The Lunchbox Workshop",
+          "description": "Inside, tiny cardboard network diagrams cover the walls. A cardboard telescope points toward tomorrow's experiments.",
+          "discovery": "On the desk: 'LightBridge optical handoff is an idea to test, not a transfer performed here.'",
+          "exits": [
+            {
+              "to": "clearing",
+              "label": "Return to Lantern Clearing"
+            },
+            {
+              "to": "doghouse",
+              "label": "Ask Queso about packet loss"
+            }
+          ]
+        },
+        {
+          "id": "garden",
+          "kind": "garden",
+          "symbol": "☾",
+          "title": "Dream Pie's Garden",
+          "description": "Fireflies trace gentle patterns through flowering ferns. Nothing is recorded; a story can simply be enjoyed.",
+          "discovery": "A paper moon reads: 'Imagine freely. Label dreams honestly. Leave the world a little kinder.'",
+          "exits": [
+            {
+              "to": "clearing",
+              "label": "Return to Lantern Clearing"
+            },
+            {
+              "to": "library",
+              "label": "Return the questions to the library"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
