@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b201b">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>PhiPie Canopy | The forest has a network now</title>
+  <meta name="description" content="A local-only, offline-capable concept demo for the PhiPie Canopy lunchbox network.">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the adventure</a>
+  <div class="stars" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#main" aria-label="PhiPie Canopy home"><span class="brand-mark">Φ</span><span>PhiPie <strong>Canopy</strong></span></a>
+    <span class="top-tag">C1 / OFFLINE CONCEPT / NO REAL RADIO</span>
+  </header>
+  <main id="main">
+    <section class="intro" aria-labelledby="welcome">
+      <p class="eyebrow">HELLO, WANDERER. YOU FOUND SOMETHING.</p>
+      <h1 id="welcome">The forest has <em>a network</em> now.</h1>
+      <p class="lead">Somewhere between a little free library, a field laboratory, and a weirdly affectionate lunchbox lives the idea of PhiPie Canopy.</p>
+      <div class="intro-tags" aria-label="Prototype qualities"><span>✦ Offline first</span><span>✦ No account</span><span>✦ Kindness encouraged</span></div>
+    </section>
+    <div class="columns">
+      <section class="visual-card" aria-label="Illustration of a retro metal lunchbox node">
+        <div class="treeline" aria-hidden="true"><span class="tree tree-one"></span><span class="tree tree-two"></span><span class="tree tree-three"></span></div>
+        <div class="signal" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="lunchbox" aria-hidden="true">
+          <div class="handle"></div><div class="case">
+            <div class="sticker">Φ</div><span class="case-title">CANOPY<br>FIELD UNIT</span><span class="case-number">NODE • 001</span>
+            <div class="case-stripes"></div><span class="light"></span>
+          </div>
+        </div>
+        <p class="illustration-caption">Retro lunchbox node · imaginary hardware drawing</p>
+        <div class="readout"><span>SCENE</span><strong>SIMULATED</strong><span class="status-dot" aria-hidden="true"></span></div>
+      </section>
+      <section class="console" aria-labelledby="console-title">
+        <p class="eyebrow">FIELD TERMINAL / DEMO</p>
+        <h2 id="console-title">You're in the grove.</h2>
+        <p class="support">Choose a fictional lunchbox personality. Every response runs in this browser. No network, hardware, model or GPS is accessed.</p>
+        <label for="nodeSelect" class="field-label">TUNE TO A NODE</label>
+        <select id="nodeSelect">
+          <option value="scout">01 — Scout Pie</option>
+          <option value="professor">02 — Professor Phi</option>
+          <option value="queso">03 — Queso Relay</option>
+          <option value="dreamer">04 — Dream Pie</option>
+        </select>
+        <div class="node-identity" aria-live="polite">
+          <p id="nodeRole" class="eyebrow">TRAIL GUIDE</p>
+          <h3 id="nodeName">Scout Pie</h3>
+          <p id="nodeGreeting">PhiOS loves you, bro.</p>
+          <p class="node-id">DEMO ID <code id="nodeId">PHIPIE-DEMO-001</code></p>
+        </div>
+        <div class="buttons">
+          <button type="button" id="storyBtn" class="primary">Explore this story ↗</button>
+          <button type="button" id="postcardBtn" class="secondary">Take a postcard ↓</button>
+        </div>
+        <div class="story-panel" id="storyPanel" aria-live="polite" hidden>
+          <span class="eyebrow">A TINY OFFLINE ADVENTURE</span>
+          <h4 id="storyTitle"></h4><p id="storyText"></p>
+        </div>
+      </section>
+    </div>
+    <section class="bottom-grid">
+      <article class="panel">
+        <p class="eyebrow">THE NEIGHBORHOOD / FICTIONAL</p>
+        <h2>Nearby signals</h2>
+        <p>Not a measured mesh. These are storybook neighbors for the Canopy concept.</p>
+        <ul id="neighborList" class="neighbors"><li>Loading fictional neighbors…</li></ul>
+      </article>
+      <article class="panel" aria-labelledby="guest-title">
+        <p class="eyebrow">LEAVE SOMETHING KIND</p>
+        <h2 id="guest-title">The kindness ledger</h2>
+        <p>Write a note for this visit. It stays in this tab's memory only and disappears on reload. Nothing is uploaded.</p>
+        <form id="noteForm" autocomplete="off">
+          <label class="field-label" for="noteInput">YOUR NOTE (120 CHARACTERS MAX)</label>
+          <textarea id="noteInput" maxlength="120" rows="2" placeholder="The moss would like to remind you to drink water." required></textarea>
+          <button type="submit" class="secondary">Pin a little kindness +</button>
+        </form>
+        <ul id="noteList" class="notes" aria-live="polite"></ul>
+      </article>
+    </section>
+    <aside class="boundary"><strong>Reality check:</strong> This is a completely static C1 browser exhibit. The lunchbox, identity, neighbors and adventures are fictional. No live Wi-Fi, mesh, QR scanning, LightBridge transfer, AI runtime or weatherproof hardware is provided. Optical delivery is a future separately tested adapter.</aside>
+  </main>
+  <footer>Φ PHIPIE CANOPY · <span>PEOPLE ABOVE PROFIT · LEDGER ABOVE EGO</span> · BUILT FOR CURIOUS HUMANS</footer>
+</body>
+</html>

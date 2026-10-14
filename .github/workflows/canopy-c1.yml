@@ -1,0 +1,22 @@
+name: PhiPie Canopy C1 static experiment
+on:
+  push:
+    paths:
+      - 'experiments/canopy/**'
+      - '.github/workflows/canopy-c1.yml'
+  pull_request:
+    paths:
+      - 'experiments/canopy/**'
+      - '.github/workflows/canopy-c1.yml'
+jobs:
+  offline-static-contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify offline UI boundaries
+        run: python -m unittest discover -s experiments/canopy/tests -v
