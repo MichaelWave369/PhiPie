@@ -1,0 +1,62 @@
+name: PhiPie Canopy C2 Commons interoperability
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/canopy/tools/**'
+      - 'experiments/canopy/tests/test_commons_adapter.py'
+      - 'experiments/canopy/CAPSULE_C2.md'
+      - 'experiments/canopy/README.md'
+      - '.github/workflows/canopy-commons-interoperability.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/canopy/tools/**'
+      - 'experiments/canopy/tests/test_commons_adapter.py'
+      - 'experiments/canopy/CAPSULE_C2.md'
+      - 'experiments/canopy/README.md'
+      - '.github/workflows/canopy-commons-interoperability.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-commons-handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read PhiPie source
+        uses: actions/checkout@v4
+        with:
+          path: phipie
+          persist-credentials: false
+      - name: Read pinned original Infinite Commons loader (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: MichaelWave369/Infinite-Commons
+          ref: 9c45db9bd5fa308a7cfb4bf4e32b0816dd68aa53
+          path: upstream-infinite-commons
+          persist-credentials: false
+      - name: Set Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Canopy C2 handoff against original Commons
+        env:
+          CANOPY_COMMONS_SRC: ../upstream-infinite-commons/src
+        working-directory: phipie
+        run: python -m unittest discover -s experiments/canopy/tests -p 'test_commons_adapter.py' -v
+      - name: CLI roundtrip and actual Commons bootstrap proof
+        working-directory: phipie
+        env:
+          CANOPY_COMMONS_SRC: ../upstream-infinite-commons/src
+        run: |
+          python experiments/canopy/tools/commons_adapter.py unpack \
+            experiments/canopy/react/src/capsules/scout-grove.commons.json \
+            "$RUNNER_TEMP/canopy-c2-export"
+          PYTHONPATH="$CANOPY_COMMONS_SRC" python -m infinite_commons.cli bootstrap-check \
+            --repo-root "$RUNNER_TEMP/canopy-c2-export" > "$RUNNER_TEMP/commons-proof.json"
+          python -c "import json,os,pathlib; d=json.loads(pathlib.Path(os.environ['RUNNER_TEMP'],'commons-proof.json').read_text()); assert d['success'] is True and d['loaded_artifacts'] == ['commons_data/artifacts/manifest.json']"
+          python experiments/canopy/tools/commons_adapter.py repack \
+            "$RUNNER_TEMP/canopy-c2-export" "$RUNNER_TEMP/canopy-c2-repacked.commons"
+          python -c "import json,os,pathlib; p=pathlib.Path(os.environ['RUNNER_TEMP'],'canopy-c2-repacked.commons'); d=json.loads(p.read_text()); assert d['format']=='phipie.canopy.capsule.v0.1'"
