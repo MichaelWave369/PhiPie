@@ -1,0 +1,16 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import assert from 'node:assert/strict';
+const root = new URL('../dist/', import.meta.url);
+const html = readFileSync(new URL('index.html', root), 'utf8');
+const sw = readFileSync(new URL('sw.js', root), 'utf8');
+const assets = readdirSync(new URL('assets/', root));
+assert.match(html, /\/PhiPie\/assets\/[^"]+\.js/);
+assert.match(html, /\/PhiPie\/assets\/[^"]+\.css/);
+assert.match(html, /\/PhiPie\/favicon\.svg/);
+assert.ok(assets.some(x => x.endsWith('.js')));
+assert.ok(assets.some(x => x.endsWith('.css')));
+assert.match(sw, /phipie-canopy-react-/);
+assert.match(sw, /index\.html/);
+assert.match(sw, /self\.addEventListener\('install'/);
+assert.match(sw, /self\.addEventListener\('fetch'/);
+console.log('PASS: /PhiPie/ asset paths, React bundle and offline shell present.');

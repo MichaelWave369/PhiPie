@@ -1,0 +1,64 @@
+name: PhiPie Canopy React Pages
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/canopy/react/**'
+      - '.github/workflows/canopy-pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'experiments/canopy/react/**'
+      - '.github/workflows/canopy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phipie-canopy-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: experiments/canopy/react
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/canopy/react/package-lock.json
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Validate original React UI source
+        run: npm run test
+      - name: Build static site and offline cache
+        run: npm run build
+      - name: Verify Pages asset paths
+        run: node tests/check-build.mjs
+      - name: Configure Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: experiments/canopy/react/dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: verify-and-build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
