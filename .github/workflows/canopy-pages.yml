@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: phipie-canopy-pages
+  group: phipie-canopy-pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -30,18 +30,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/canopy/react/package-lock.json
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Validate original React UI source
         run: npm run test
       - name: Build static site and offline cache
         run: npm run build
       - name: Verify Pages asset paths
         run: node tests/check-build.mjs
-      - name: Emit generated lockfile for reproducible handoff
-        if: github.event_name == 'pull_request'
-        run: |
-          node --input-type=commonjs -e "const f=require('fs');const b=Buffer.from(JSON.stringify(JSON.parse(f.readFileSync('package-lock.json','utf8')))).toString('base64');for(let i=0;i<b.length;i+=3500)console.log('LOCKPART:'+String(i/3500)+':'+b.slice(i,i+3500));"
       - name: Configure Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
