@@ -40,3 +40,11 @@ Evidence: source tests, Vite production output, successful Actions Pages deploym
 Unqualified: all hardware, optical transport, mesh, security review and emergency communications.
 
 **People Above Profit · Ledger Above Ego · PhiOS loves you, bro.**
+
+## Canopy Commons Capsule C1
+
+The React page now has a **Pocket Commons** doorway with a real, original, portable JSON sample at \`src/capsules/scout-grove.commons.json\`. The UI can explore its five fiction-only rooms, export a single \`.commons\` file, import the selected file locally and reject invalid or oversized documents. Validation performs no code execution, storage or network calls.
+
+A capsule embeds a **Commons-shaped** \`bootstrap\` (\`target: commons\`, deterministic artifact path and order) and an embedded virtual artifact. The canonical Infinite Commons Python loader consumes a **filesystem tree**, so a single-file Canopy capsule is **not plug-and-play compatible** with that loader. A separately reviewed and tested unpack adapter would be required before claiming compatibility.
+
+See [the C1 capsule contract](../../CAPSULE_C1.md). This is not a live Porch, authenticated identity, real mesh, optical transfer, AI model, or content publication system.
