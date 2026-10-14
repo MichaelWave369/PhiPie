@@ -1,0 +1,23 @@
+{
+  "name": "phipie-canopy-pages",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build && node scripts/precache.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/*.test.mjs",
+    "verify": "npm run test && npm run build && node tests/check-build.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "vite": "7.1.12"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
