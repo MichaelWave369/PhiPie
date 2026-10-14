@@ -47,3 +47,7 @@ python -m unittest discover -s experiments/canopy/tests -v
 We will write original code. External projects may inform requirements but should not be copied into this experiment. This prototype changes no PHIPIE-03 qualification assertions and makes no claim that PHIPIE-04 or later has completed.
 
 **People Above Profit · Ledger Above Ego · PhiOS loves you, bro.**
+
+## C2: canonical Infinite Commons bootstrap bridge (candidate)
+
+The optional [C2 adapter](CAPSULE_C2.md) validates a local .commons file and creates a new directory with canonical commons_data bootstrap and manifest files. An independent test exercises the unmodified, pinned upstream Infinite Commons Python loader. This proves file-contract interoperability, **not** shared 3D/React rendering, Mesh, LightBridge or Porch authority.
