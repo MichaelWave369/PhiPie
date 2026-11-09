@@ -159,7 +159,7 @@ def advise(payload: dict[str, Any], *, now: datetime) -> dict[str, Any]:
     stale = not -5 <= age_seconds <= MAX_TELEMETRY_AGE_SECONDS
     health_ok = power["battery_health"] == "ok"
     soc = float(power["battery_soc_pct"])
-    if stale or not health_ok:
+    if stale or not health_ok or power["supply_mode"] == "unknown":
         mode = "untrusted"
     elif soc < 20:
         mode = "critical"
@@ -186,6 +186,8 @@ def advise(payload: dict[str, Any], *, now: datetime) -> dict[str, Any]:
             reason = "power telemetry stale or future-dated"
         elif not health_ok:
             reason = "battery health fault or unknown"
+        elif power["supply_mode"] == "unknown":
+            reason = "power supply mode unknown; do not assume availability"
         elif mode == "critical":
             reason = "battery reserve critical; no new placements"
         elif mode == "conservation" and job["priority"] != "essential":

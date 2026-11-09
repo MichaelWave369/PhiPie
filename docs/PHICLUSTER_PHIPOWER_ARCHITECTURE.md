@@ -66,7 +66,7 @@ along with synthetic battery SOC/health and the age of observations.
   be proposed within each node's slots/watts and overall watts.
 - **conservation** at 20% <= SOC < 45%: essential proposals only.
 - **critical** below 20%: no new job proposals.
-- **untrusted** for stale, future-dated or faulty/unknown telemetry:
+- **untrusted** for stale, future-dated, faulty/unknown battery telemetry or unknown supply mode:
   no new job proposals.
 - Jobs without a synthetic grant are denied, but this toy boolean is not
   actual authentication or a PhiOS grant.

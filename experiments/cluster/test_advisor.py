@@ -41,6 +41,13 @@ class AdvisorTests(unittest.TestCase):
         plan = advise(payload, now=datetime(2026, 11, 8, 11, 0, tzinfo=timezone.utc))
         self.assertEqual("untrusted", plan["power_mode"])
 
+    def test_unknown_supply_mode_defers_all(self):
+        payload = scenario()
+        payload["power"]["supply_mode"] = "unknown"
+        plan = advise(payload, now=AT)
+        self.assertEqual("untrusted", plan["power_mode"])
+        self.assertTrue(all(d["decision"] == "defer" for d in plan["decisions"]))
+
     def test_critical_battery_refuses_new_placements(self):
         payload = scenario()
         payload["power"]["battery_soc_pct"] = 19
