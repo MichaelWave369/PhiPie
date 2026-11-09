@@ -1,0 +1,58 @@
+{
+  "schema": "phicluster-synthetic/v0.1",
+  "power": {
+    "observed_at": "2026-11-08T12:00:00Z",
+    "source": "synthetic",
+    "supply_mode": "solar-battery",
+    "solar_w": 310,
+    "battery_soc_pct": 76,
+    "battery_health": "ok",
+    "safe_incremental_w": 36
+  },
+  "nodes": [
+    {
+      "node_id": "pie-control-01",
+      "role": "control",
+      "state": "ready",
+      "max_incremental_w": 8,
+      "free_slots": 1
+    },
+    {
+      "node_id": "pie-service-01",
+      "role": "service",
+      "state": "ready",
+      "max_incremental_w": 15,
+      "free_slots": 1
+    },
+    {
+      "node_id": "pie-vault-01",
+      "role": "vault",
+      "state": "ready",
+      "max_incremental_w": 12,
+      "free_slots": 1
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "dashboard",
+      "required_role": "control",
+      "priority": "essential",
+      "incremental_w": 4,
+      "simulated_grant": true
+    },
+    {
+      "job_id": "indexer",
+      "required_role": "service",
+      "priority": "opportunistic",
+      "incremental_w": 10,
+      "simulated_grant": true
+    },
+    {
+      "job_id": "backup",
+      "required_role": "vault",
+      "priority": "standard",
+      "incremental_w": 7,
+      "simulated_grant": true
+    }
+  ]
+}
