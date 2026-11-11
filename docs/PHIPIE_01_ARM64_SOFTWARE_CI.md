@@ -108,3 +108,14 @@ It does **not** establish:
 - production qualification.
 
 Those belong to later rungs.
+
+## November 9, 2026 test-fixture maintenance requalification
+
+An isolated PhiOS maintenance branch preserves the exact original runtime
+snapshot while correcting non-expiration test fixtures that otherwise expired
+on October 20-21, 2026. Only four test files change. The active exact SHA
+now comes from deps/phios.env; the original creation SHA above is historical.
+
+See [maintenance snapshot evidence](PHIPIE_01_MAINTENANCE_SNAPSHOT.md).
+This is a new software evidence input and MUST pass all native ARM64/x86_64
+lanes before qualification can be asserted.
