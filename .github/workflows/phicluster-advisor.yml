@@ -1,0 +1,26 @@
+name: PhiCluster advisory sandbox
+
+on:
+  push:
+    paths:
+      - "experiments/cluster/**"
+      - "docs/PHICLUSTER_*.md"
+      - ".github/workflows/phicluster-advisor.yml"
+  pull_request:
+    paths:
+      - "experiments/cluster/**"
+      - "docs/PHICLUSTER_*.md"
+      - ".github/workflows/phicluster-advisor.yml"
+
+jobs:
+  simulation-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run synthetic advisor refusal tests
+        run: python -m unittest discover -s experiments/cluster -p 'test_*.py' -v
+      - name: Demonstrate deterministic offline scenario
+        run: python experiments/cluster/advisor.py experiments/cluster/scenario.json --now 2026-11-08T12:00:30Z

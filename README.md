@@ -70,3 +70,12 @@ physical deployment, or any new Pi hardware qualification.
 MIT. See [LICENSE](LICENSE).
 
 **Plug In → Govern → Create.**
+
+## PhiCluster + PhiPower (experimental)
+
+A [three-node, solar-aware architecture proposal](docs/PHICLUSTER_PHIPOWER_ARCHITECTURE.md),
+[bench-first build plan](docs/PHICLUSTER_STARTER_BUILD.md), and
+[fully offline read-only scheduler simulation](experiments/cluster/README.md) explore
+future governed PhiPie Tank hardware. **No real battery, GPIO, cluster dispatch,
+solar hardware or extra PhiPie qualification is claimed.** PHIPIE-03 remains
+active.
