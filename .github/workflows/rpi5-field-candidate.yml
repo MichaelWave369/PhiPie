@@ -21,6 +21,8 @@ jobs:
         run: bash scripts/assert-architecture.sh aarch64
       - name: Syntax-check field tools
         run: |
+          bash -n scripts/prefetch-image-assets.sh
+          bash scripts/prefetch-image-assets.sh --self-test
           python -m py_compile image/field/collect_boot_evidence.py
           python -m py_compile scripts/field/validate-receipt.py
           bash -n scripts/field/verify-candidate.sh
@@ -57,6 +59,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends python3-yaml python3-debian dpkg-dev mmdebstrap debian-archive-keyring podman uidmap dbus-user-session zip dosfstools e2fsprogs rsync curl ca-certificates xz-utils mtools pv btrfs-progs dctrl-tools uuid-runtime fdisk python3-jsonschema cryptsetup-bin python3-pip make build-essential autoconf automake libtool autopoint flex gettext pkgconf zstd file
           sudo chmod o+x /home/runner
+      - name: Prefetch verified image build assets
+        run: bash scripts/prefetch-image-assets.sh
       - name: Build and verify field image
         run: bash scripts/build-image.sh field
       - name: Record field candidate evidence
